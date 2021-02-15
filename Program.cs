@@ -10,6 +10,9 @@ namespace BattleshipProject
     {
         static void Main(string[] args)
         {
+            GameState state = new GameState();
+            state.DisplayBoard();
+            Console.ReadLine();
         }
     }
 }

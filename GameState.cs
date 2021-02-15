@@ -18,6 +18,7 @@ namespace BattleshipProject
         // String representation of hits, misses, and ships
         static readonly int BOARDWIDTH = 10;
         static readonly int BOARDHEIGHT = 10;
+        private static readonly string TOPBORDER = "  A B C D E F G H I J";
         Location[,] boardState;
         List<Ship> ships;
         int numShots;
@@ -77,6 +78,53 @@ namespace BattleshipProject
                 }
             }
             return false;
+        }
+
+        // use this to experiment with displayign color to console
+        public static void ColorDisplayTest()
+        {
+            Console.ForegroundColor = ConsoleColor.Cyan;
+            Console.Write("Cyan");
+            Console.ForegroundColor = ConsoleColor.Green;
+            Console.Write("Green");
+        }
+
+        private void DisplayLocation(Location location)
+        {
+            if (location == Location.Empty)
+            {
+                Console.Write("  ");
+            }
+            else if (location == Location.Hit)
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.Write(" x");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.Write(" o");
+            }
+            Console.ResetColor();
+                
+        }
+
+        public void DisplayBoard()
+        {
+            // Display letters at top
+            Console.WriteLine(" " + TOPBORDER);
+            for (int i = 0; i < boardState.GetLength(0); i++)
+            {
+
+                Console.Write((i < 9 ? " " : "") + (i + 1));
+                  
+                for (int j = 0; j < boardState.GetLength(1); j++)
+                {
+                    DisplayLocation(boardState[i, j]);
+                }
+                Console.WriteLine();
+            }
+            
         }
     }
 }
