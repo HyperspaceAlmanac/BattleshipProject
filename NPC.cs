@@ -44,7 +44,7 @@ namespace BattleshipProject
                 // Based on if prev is hit or miss, choose new action
                 // If prev missed, then try another legal adjacent move
                 // If prev hit, and there is hit before it, continue this trajectory
-
+                Nextmove(opponentState);
             }
             // For now, thinking of keeping track of previous 2 hits
             EndTurn();
@@ -71,36 +71,28 @@ namespace BattleshipProject
                 }
             }
         }
-        protected void PrevHit(GameState state)
+        protected void Nextmove(GameState state)
         {
+            HashSet<Tuple<int, int>> considered = new HashSet<Tuple<int, int>>();
+            List<int[]> highPriority = new List<int[]>();
+            List<int[]> lowPriority = new List<int[]>();
+            // Prioritize 2 in a row
+            FoundAllNearbyShips(state);
+        }
 
-        }
-        // 
-        protected void PrevMiss(GameState state)
+
+        protected void DFS(GameState state, List<int[]> soFar)
         {
         }
+ 
         // Try best moves to sink this ship
-        protected void TwoHits(GameState state)
-        {
-        }
-        protected int currentNumHits(GameState state) {
-            int total = 0;
-            foreach (Tuple<int, int> tup in currentSearch)
-            {
-                if (state.LocationHit(tup.Item1, tup.Item2))
-                {
-                    total += 1;
-                }
-            }
-            return total;
-        }
+
         protected void FoundAllNearbyShips(GameState state)
         {
-            int current = currentNumHits(state);
-            if (prevTotal + current == state.SunkShipTotal())
+            if (prevTotal + currentSearch.Count == state.SunkShipTotal())
             {
                 searchNewShip = true;
-                prevTotal += current;
+                prevTotal += currentSearch.Count;
             }
         }
 
