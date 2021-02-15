@@ -12,6 +12,9 @@ namespace BattleshipProject
 {
     class NPC : Player
     {
+        public static readonly Tuple<int, int>[] DIRECTIONS = new Tuple<int, int>[] {
+            new Tuple<int, int>(0, 1), new Tuple<int, int>(0, -1),
+            new Tuple<int, int>(1, 0), new Tuple<int, int>(-1, 0)};
         protected readonly int RNGSEED = 100;
         protected readonly bool USE_RNG_SEED = false;
         protected Random rand;
@@ -32,7 +35,6 @@ namespace BattleshipProject
             currentSearch = new HashSet<Tuple<int, int>>();
             turnNumber = 0;
             searchNewShip = true;
-            sunkList = new List<int>();
         }
         public override void TakeTurn(GameState ownState, GameState opponentState)
         {
@@ -48,6 +50,8 @@ namespace BattleshipProject
                 Nextmove(opponentState);
             }
             // For now, thinking of keeping track of previous 2 hits
+            ownState.DisplayAll();
+            opponentState.DisplayAll();
             EndTurn();
         }
 
@@ -78,19 +82,86 @@ namespace BattleshipProject
         // For now I do not want to do that
         protected void Nextmove(GameState state)
         {
-            List<Tuple<int, int>> soFar = new List<Tuple<int, int>>();
+            List<int[]> soFar = new List<int[]>();
             // NPC will randomly select a hit, and use DFS to prioritize adjacent hits
             // Continue Adjacent path if able, otherwise, choose any legal move
             // Randomly choose to go thorugh direction list forward or backward
+            int index = rand.Next(currentSearch.Count);
+            int current = 0;
+
+            //gotta assign it to something
+            Tuple<int, int> temp;
+            HashSet<Tuple<int, int>> highPriority = new HashSet<Tuple<int, int>>();
+            HashSet<Tuple<int, int>> lowPriority = new HashSet<Tuple<int, int>>();
+            List<int[]> highPriorityList = new List<int[]>();
+            List<int[]> lowPriorityList = new List<int[]>();
+            // Randomly choosing a number from HashSet
+            // O(N) but best to have this here since it's done once per move
+            foreach (Tuple<int, int> t in currentSearch) {
+                foreach (Tuple<int, int> direction in DIRECTIONS) {
+                    temp = new Tuple<int, int>(t.Item1 + direction.Item1, t.Item2 + direction.Item2);
+                    if (ValidMove(temp.Item1, temp.Item2, state)) {
+                        if (!highPriority.Contains(temp))
+                        {
+                            highPriority.Add(temp);
+                            highPriorityList.Add(new int[] {temp.Item1, temp.Item2});
+                        }
+                        else if (!lowPriority.Contains(temp))
+                        {
+                            lowPriority.Add(temp);
+                            lowPriorityList.Add(new int[] { temp.Item1, temp.Item2 });
+                        }
+                    }
+                }
+            }
+            int[] result;
+            if (highPriority.Count > 0)
+            {
+                result = highPriorityList[rand.Next(highPriorityList.Count)];
+                state.MakeMove(result[0], result[1]);
+            }
+            else if (lowPriority.Count > 0)
+            {
+                result = lowPriorityList[rand.Next(highPriorityList.Count)];
+                state.MakeMove(result[0], result[1]);
+            }
+            else
+            {
+                Console.WriteLine("Something went seriously wrong at choose next NPC move");
+            }
+            
 
             // Check if AI will continue to search for ships or go completely random next turn
             FoundAllNearbyShips(state);
         }
 
 
-        // NPC will 
-        protected void DFS(GameState state, List<int[]> soFar, bool clockwise)
+        // Maybe DFS is not the best for this since it's not a can you find a solution type of thing
+        // Going to instead do Find all of legal surrounding moves, and separate them in to high and low priority
+        // High priority are ones with 2 moves adjacent in a line, low is everything else.
+        // Will not bother checking for duplicates. Just have locations taht overlap have higher chance of being picked
+
+        protected bool ValidMove(int x, int y, GameState state)
         {
+            if (x < 0 || x >= GameState.BOARDHEIGHT || y < 0 || y >= GameState.BOARDWIDTH)
+            {
+                return false;
+            }
+            return state.IsEmpty(x, y);
+        }
+        protected bool TwoAdjacent(int x, int y, GameState state)
+        {
+            foreach (Tuple<int, int> tuple in DIRECTIONS)
+            {
+                if (currentSearch.Contains(new Tuple<int, int>(x + tuple.Item1, y + tuple.Item2)))
+                {
+                    if (currentSearch.Contains(new Tuple<int, int>(x + tuple.Item1 * 2, y + tuple.Item2 * 2)))
+                    {
+                        return true;
+                    }
+                }
+            }
+            return false;
         }
  
         // Try best moves to sink this ship
@@ -106,8 +177,6 @@ namespace BattleshipProject
 
         public override void PlaceShips(GameState playerState)
         {
-            Tuple<int, int>[] directions = new Tuple<int, int>[] {new Tuple<int, int>(0, 1), new Tuple<int, int>(0, -1),
-                new Tuple<int, int>(1, 0), new Tuple<int, int>(-1, 0)};
             int x;
             int y;
             bool placed;
@@ -121,7 +190,7 @@ namespace BattleshipProject
                     placed = false;
                     x = rand.Next(GameState.BOARDHEIGHT);
                     y = rand.Next(GameState.BOARDWIDTH);
-                    modifier = directions[rand.Next(directions.Length)];
+                    modifier = DIRECTIONS[rand.Next(DIRECTIONS.Length)];
                     
                     if (ValidPlacement(pair, x, y, modifier, playerState)) {
                         AddShip(x, y, pair, modifier, playerState);
@@ -131,7 +200,7 @@ namespace BattleshipProject
             }
             Console.WriteLine("The NPC has finished placing its ships");
             // DEBUG1
-            //playerState.DisplayAll();
+            playerState.DisplayAll();
             EndTurn();
         }
 

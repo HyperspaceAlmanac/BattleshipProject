@@ -237,7 +237,7 @@ namespace BattleshipProject
 
         public bool AvailableMove(int x, int y)
         {
-            return moveHistory.Contains(new Tuple<int, int>(x, y));
+            return !moveHistory.Contains(new Tuple<int, int>(x, y));
         }
         public bool LocationHit(int x, int y)
         {
@@ -255,6 +255,16 @@ namespace BattleshipProject
                 }
             }
             return total;
+        }
+
+        public bool IsEmpty(int x, int y)
+        {
+            if (x > -1 && x < BOARDHEIGHT && y > -1 && y < BOARDWIDTH)
+            {
+                return boardState[x, y] == Location.Empty;
+            }
+            Console.WriteLine("Need to debug");
+            return false;
         }
     }
 }

@@ -48,10 +48,12 @@ namespace BattleshipProject
                 gameOver = false;
                 DisplayIntro();
                 SelectMode();
-                state1 = new GameState(true);
-                state2 = new GameState(false);
+                state1 = new GameState(false);
+                state2 = new GameState(true);
                 p1.PlaceShips(state1);
+                state2.TogglePlayer();
                 p2.PlaceShips(state2);
+                state2.TogglePlayer();
                 while (!gameOver)
                 {
                     if (playerOneTurn)
@@ -94,6 +96,12 @@ namespace BattleshipProject
                     case "2":
                         p1 = new HumanPlayer(1);
                         p2 = new HumanPlayer(2);
+                        done = true;
+                        break;
+                    // Debug only
+                    case "3":
+                        p1 = new NPC(1);
+                        p2 = new NPC(2);
                         done = true;
                         break;
                     default:
