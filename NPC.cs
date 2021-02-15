@@ -32,6 +32,7 @@ namespace BattleshipProject
             currentSearch = new HashSet<Tuple<int, int>>();
             turnNumber = 0;
             searchNewShip = true;
+            sunkList = new List<int>();
         }
         public override void TakeTurn(GameState ownState, GameState opponentState)
         {
@@ -71,17 +72,24 @@ namespace BattleshipProject
                 }
             }
         }
+        // Hmmm, there are some really difficult game states for NPC to check
+        // In the interest of time, I will not make the AI completely optimal
+        // Some ship placement can be really tricky and will require AI to keep track of order of moves
+        // For now I do not want to do that
         protected void Nextmove(GameState state)
         {
-            HashSet<Tuple<int, int>> considered = new HashSet<Tuple<int, int>>();
-            List<int[]> highPriority = new List<int[]>();
-            List<int[]> lowPriority = new List<int[]>();
-            // Prioritize 2 in a row
+            List<Tuple<int, int>> soFar = new List<Tuple<int, int>>();
+            // NPC will randomly select a hit, and use DFS to prioritize adjacent hits
+            // Continue Adjacent path if able, otherwise, choose any legal move
+            // Randomly choose to go thorugh direction list forward or backward
+
+            // Check if AI will continue to search for ships or go completely random next turn
             FoundAllNearbyShips(state);
         }
 
 
-        protected void DFS(GameState state, List<int[]> soFar)
+        // NPC will 
+        protected void DFS(GameState state, List<int[]> soFar, bool clockwise)
         {
         }
  
