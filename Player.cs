@@ -8,5 +8,18 @@ namespace BattleshipProject
 {
     class Player
     {
+        public Player()
+        {
+        }
+        public virtual bool TakeTurn(GameState playerState, GameState opponentState)
+        {
+
+            return false;
+        }
+
+        public virtual bool PlaceShips(GameState playerState)
+        {
+            return true;
+        }
     }
 }

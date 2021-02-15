@@ -6,9 +6,34 @@ using System.Threading.Tasks;
 
 namespace BattleshipProject
 {
-    // Have IO handling in another class? Have it done here?
-    // Currently thinking of renderer running in another thread, with Blocking IO waiting for key press
+    // Changed my mind, just use Console.ReadKey() and update display on moves made
     class GameEngine
     {
+        private bool playerOneTurn;
+        private Player p1;
+        private Player p2;
+
+        public GameEngine()
+        {
+            playerOneTurn = true;
+            
+        }
+
+        private void DisplayIntro()
+        {
+            Console.WriteLine("Welcome to Battleship!");
+        }
+
+        private void DisplayControls()
+        {
+            Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
+            Console.WriteLine("Use Escape key to cancel, and space to confirm");
+        }
+
+        private void ChangePlaer()
+        {
+            Console.WriteLine($"Player{(playerOneTurn ? 1 : 2)}: Please press any key to take your turn");
+            Console.ReadKey();
+        }
     }
 }

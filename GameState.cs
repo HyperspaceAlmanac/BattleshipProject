@@ -32,7 +32,7 @@ namespace BattleshipProject
         // Temporarily make public
         public bool opponentBoard;
 
-        public GameState()
+        public GameState(bool opponentBoard)
         {
             highlightRow = false;
             highlightColumn = false;
@@ -47,7 +47,7 @@ namespace BattleshipProject
             numShots = 0;
             ships = new List<Ship>();
             allShipLocations = new List<Tuple<int, int>>();
-            opponentBoard = true;
+            this.opponentBoard = opponentBoard;
         }
 
         // check if game can continue
@@ -217,6 +217,11 @@ namespace BattleshipProject
         {
             highlightRow = false;
             highlightColumn = false;
+        }
+
+        public void TogglePlayer()
+        {
+            opponentBoard = !opponentBoard;
         }
     }
 }
