@@ -29,17 +29,6 @@ namespace BattleshipProject
             Console.WriteLine("===============================");
         }
 
-        private void DisplayControls()
-        {
-            Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
-            Console.WriteLine("Use Escape key to cancel, and space to confirm");
-        }
-
-        private void ChangePlaer()
-        {
-            Console.WriteLine($"Player{(playerOneTurn ? 1 : 2)}: Please press any key to take your turn");
-            Console.ReadKey();
-        }
         private void RunGame()
         {
             bool gameOver = false;
@@ -78,6 +67,27 @@ namespace BattleshipProject
 
         private void SelectMode()
         {
+            bool done = false;
+            while (!done)
+            {
+                Console.WriteLine("Please enter 1 for single player, or 2 for multiplayer");
+                string val = Console.ReadLine();
+                switch (val)
+                {
+                    case "1":
+                        p1 = new Player(1);
+                        p2 = new NPC(2);
+                        done = true;
+                        break;
+                    case "2":
+                        p1 = new Player(1);
+                        p2 = new Player(2);
+                        done = true;
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void DisplayWinner(bool playerOne)

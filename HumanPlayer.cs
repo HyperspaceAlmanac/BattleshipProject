@@ -1,0 +1,43 @@
+﻿using System;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
+
+namespace BattleshipProject
+{
+    class HumanPlayer : Player
+    {
+        public HumanPlayer(int num) : base(num)
+        {
+
+        }
+        public override void TakeTurn(GameState playerState, GameState opponentState)
+        {
+            ChangePlayer();
+            bool done = false;
+            while (!done)
+            {
+                done = true;
+            }
+        }
+
+        public override void PlaceShips(GameState playerState)
+        {
+            Console.WriteLine("Player" + playerNum + "'s turn to place ships");
+        }
+
+        protected void ChangePlayer()
+        {
+            Console.WriteLine($"Player{(playerNum == 1 ? 1 : 2)}: Please press any key to take your turn");
+            Console.ReadKey();
+            Console.Clear();
+        }
+
+        private void DisplayControls()
+        {
+            Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
+            Console.WriteLine("Use Escape key to cancel, and space to confirm");
+        }
+    }
+}

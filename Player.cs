@@ -6,20 +6,17 @@ using System.Threading.Tasks;
 
 namespace BattleshipProject
 {
-    class Player
+    // Made the decision to have IO handling inside of player class
+    // Moving most of these to HumanPlayer class
+    abstract class Player
     {
-        public Player()
+        protected int playerNum;
+        public Player(int num)
         {
+            playerNum = num;
         }
-        public virtual bool TakeTurn(GameState playerState, GameState opponentState)
-        {
+        public abstract void TakeTurn(GameState playerState, GameState opponentState);
 
-            return false;
-        }
-
-        public virtual bool PlaceShips(GameState playerState)
-        {
-            return true;
-        }
+        public abstract void PlaceShips(GameState playerState);
     }
 }

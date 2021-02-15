@@ -10,7 +10,7 @@ namespace BattleshipProject
     {
         static void Main(string[] args)
         {
-            GameState state = new GameState();
+            GameState state = new GameState(true);
             state.TestAddShip();
             state.DisplayAll();
             state.MakeMove(0, 0);
