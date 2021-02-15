@@ -16,8 +16,8 @@ namespace BattleshipProject
     class GameState
     {
         // String representation of hits, misses, and ships
-        static readonly int BOARDWIDTH = 10;
-        static readonly int BOARDHEIGHT = 10;
+        public static readonly int BOARDWIDTH = 10;
+        public static readonly int BOARDHEIGHT = 10;
         private static readonly string TOPBORDER = "  A B C D E F G H I J";
         Location[,] boardState;
         List<Ship> ships;
@@ -200,13 +200,7 @@ namespace BattleshipProject
             return true;
         }
         // Change to private later
-        public void FillInShipLocations()
-        {
-            foreach (Ship s in ships)
-            {
-                s.FillInCoordinates(allShipLocations);
-            }
-        }
+
         public void TestDisplayHighlight()
         {
             highlightRow = true;
@@ -222,6 +216,16 @@ namespace BattleshipProject
         public void TogglePlayer()
         {
             opponentBoard = !opponentBoard;
+        }
+
+        public bool LocationOccupied(int x, int y)
+        {
+            return allShipLocations.Contains(new Tuple<int, int>(x, y));
+        }
+
+        public void AddShip(Ship ship) {
+            ships.Add(ship);
+            ship.FillInCoordinates(allShipLocations);
         }
     }
 }

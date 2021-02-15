@@ -14,6 +14,12 @@ namespace BattleshipProject
         private Player p2;
         private GameState state1;
         private GameState state2;
+        public static readonly Tuple<string, int>[] PIECES = new Tuple<string, int>[] {
+            new Tuple<string, int>("destroyer", 2),
+            new Tuple<string, int>("destroyer", 2),
+            new Tuple<string, int>("submarine", 3),
+            new Tuple<string, int>("battleship", 4),
+            new Tuple<string, int>("aircraft carrier", 5)};
 
         public GameEngine()
         {
@@ -29,7 +35,7 @@ namespace BattleshipProject
             Console.WriteLine("===============================");
         }
 
-        private void RunGame()
+        public void RunGame()
         {
             bool gameOver = false;
             bool exitGame = false;
@@ -38,6 +44,8 @@ namespace BattleshipProject
                 gameOver = false;
                 DisplayIntro();
                 SelectMode();
+                state1 = new GameState(true);
+                state2 = new GameState(false);
                 p1.PlaceShips(state1);
                 p2.PlaceShips(state2);
                 while (!gameOver)
@@ -75,13 +83,13 @@ namespace BattleshipProject
                 switch (val)
                 {
                     case "1":
-                        p1 = new Player(1);
+                        p1 = new HumanPlayer(1);
                         p2 = new NPC(2);
                         done = true;
                         break;
                     case "2":
-                        p1 = new Player(1);
-                        p2 = new Player(2);
+                        p1 = new HumanPlayer(1);
+                        p2 = new HumanPlayer(2);
                         done = true;
                         break;
                     default:

@@ -20,11 +20,14 @@ namespace BattleshipProject
             {
                 done = true;
             }
+            Console.WriteLine("end of Player's turn");
+            Console.ReadKey();
         }
 
         public override void PlaceShips(GameState playerState)
         {
             Console.WriteLine("Player" + playerNum + "'s turn to place ships");
+            // For now just automatically place one shp
         }
 
         protected void ChangePlayer()

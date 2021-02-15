@@ -29,7 +29,32 @@ namespace BattleshipProject
 
         public override void PlaceShips(GameState playerState)
         {
+            Tuple<int, int>[] directions = new Tuple<int, int>[] {new Tuple<int, int>(0, 1), new Tuple<int, int>(0, -1),
+                new Tuple<int, int>(1, 0), new Tuple<int, int>(-1, 0)};
+            int x;
+            int y;
+            bool placed;
+            Tuple<int, int> modifier;
+
+            foreach (Tuple<string, int> pair in GameEngine.PIECES)
+            {
+                placed = false;
+                while (!placed)
+                {
+                    placed = false;
+                    x = rand.Next(GameState.BOARDHEIGHT);
+                    y = rand.Next(GameState.BOARDWIDTH);
+                    modifier = directions[rand.Next(directions.Length)];
+                    
+                    if (ValidPlacement(pair, x, y, modifier, playerState)) {
+                        AddShip(x, y, pair, modifier, playerState);
+                        placed = true;
+                    }
+                }
+            }
             Console.WriteLine("The NPC has finished placing its ships");
+            // DEBUG1
+            playerState.DisplayAll();
             EndTurn();
         }
 
