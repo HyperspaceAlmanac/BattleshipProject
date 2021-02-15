@@ -11,6 +11,9 @@ namespace BattleshipProject
         protected readonly int RNGSEED = 100;
         protected readonly bool USE_RNG_SEED = false;
         protected Random rand;
+        protected HashSet<Tuple<int, int, bool>> currentSearch;
+        protected int turnNumber;
+        protected bool searchNewShip;
         public NPC(int num) : base(num)
         {
             if (USE_RNG_SEED)
@@ -21,10 +24,59 @@ namespace BattleshipProject
             {
                 rand = new Random();
             }
+            currentSearch = new HashSet<Tuple<int, int, bool>>();
+            turnNumber = 0;
+            searchNewShip = true;
         }
-        public override void TakeTurn(GameState state1, GameState state2)
+        public override void TakeTurn(GameState ownState, GameState opponentState)
         {
+            turnNumber += 1;
+            // Need differnt logic for first two turns before NPC has seen 2 ships
+            if (searchNewShip)
+            {
+                CompletelyRandom(opponentState);
+            } else {
+                // Based on if prev is hit or miss, choose new action
+                // If prev missed, then try another legal adjacent move
+                // If prev hit, and there is hit before it, continue this trajectory
+
+            }
+            // For now, thinking of keeping track of previous 2 hits
             EndTurn();
+        }
+
+        protected void CompletelyRandom(GameState opponentState)
+        {
+            bool done = false;
+            int x, y;
+            bool result;
+            while (!done)
+            {
+                x = rand.Next(GameState.BOARDHEIGHT);
+                y = rand.Next(GameState.BOARDWIDTH);
+                if (opponentState.AvailableMove(x, y))
+                {
+                    result = opponentState.MakeMove(x, y);
+                    if (result)
+                    {
+                        currentSearch = new HashSet<Tuple<int, int, bool>>();
+                        searchNewShip = true;
+                    }
+                    done = true;
+                }
+            }
+        }
+        protected void PrevHit()
+        {
+
+        }
+        // 
+        protected void PrevMiss()
+        {
+        }
+        // Try best moves to sink this ship
+        protected void TwoHits()
+        {
         }
 
         public override void PlaceShips(GameState playerState)
@@ -54,7 +106,7 @@ namespace BattleshipProject
             }
             Console.WriteLine("The NPC has finished placing its ships");
             // DEBUG1
-            playerState.DisplayAll();
+            //playerState.DisplayAll();
             EndTurn();
         }
 

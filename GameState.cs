@@ -22,6 +22,7 @@ namespace BattleshipProject
         Location[,] boardState;
         List<Ship> ships;
         List<Tuple<int, int>> allShipLocations;
+        HashSet<Tuple<int, int>> moveHistory;
         int numShots;
 
         // Options for displaying current selected row / column
@@ -47,13 +48,14 @@ namespace BattleshipProject
             numShots = 0;
             ships = new List<Ship>();
             allShipLocations = new List<Tuple<int, int>>();
+            moveHistory = new HashSet<Tuple<int, int>>();
             this.opponentBoard = opponentBoard;
         }
 
         // check if game can continue
         public bool MovesAvailable()
         {
-            return numShots < 100;
+            return numShots < BOARDWIDTH * BOARDHEIGHT;
         }
 
         // check if this player has won (sunk all of opponent's ships)
@@ -87,9 +89,10 @@ namespace BattleshipProject
                     }
                     boardState[x, y] = current;
                     numShots += 1;
-                    return true;
+                    return current == Location.Hit;
                 }
             }
+            Console.WriteLine("Should not reach here! Need to debug");
             return false;
         }
 
@@ -226,6 +229,15 @@ namespace BattleshipProject
         public void AddShip(Ship ship) {
             ships.Add(ship);
             ship.FillInCoordinates(allShipLocations);
+        }
+
+        public bool AvailableMove(int x, int y)
+        {
+            return moveHistory.Contains(new Tuple<int, int>(x, y));
+        }
+
+        public int NumShipsRemaining()
+        {
         }
     }
 }
