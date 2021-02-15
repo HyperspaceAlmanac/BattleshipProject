@@ -11,9 +11,10 @@ namespace BattleshipProject
         protected readonly int RNGSEED = 100;
         protected readonly bool USE_RNG_SEED = false;
         protected Random rand;
-        protected HashSet<Tuple<int, int, bool>> currentSearch;
+        protected HashSet<Tuple<int, int>> currentSearch;
         protected int turnNumber;
         protected bool searchNewShip;
+        protected int prevTotal;
         public NPC(int num) : base(num)
         {
             if (USE_RNG_SEED)
@@ -24,7 +25,7 @@ namespace BattleshipProject
             {
                 rand = new Random();
             }
-            currentSearch = new HashSet<Tuple<int, int, bool>>();
+            currentSearch = new HashSet<Tuple<int, int>>();
             turnNumber = 0;
             searchNewShip = true;
         }
@@ -59,24 +60,44 @@ namespace BattleshipProject
                     result = opponentState.MakeMove(x, y);
                     if (result)
                     {
-                        currentSearch = new HashSet<Tuple<int, int, bool>>();
+                        currentSearch = new HashSet<Tuple<int, int>>();
                         searchNewShip = true;
                     }
                     done = true;
                 }
             }
         }
-        protected void PrevHit()
+        protected void PrevHit(GameState state)
         {
 
         }
         // 
-        protected void PrevMiss()
+        protected void PrevMiss(GameState state)
         {
         }
         // Try best moves to sink this ship
-        protected void TwoHits()
+        protected void TwoHits(GameState state)
         {
+        }
+        protected int currentNumHits(GameState state) {
+            int total = 0;
+            foreach (Tuple<int, int> tup in currentSearch)
+            {
+                if (state.LocationHit(tup.Item1, tup.Item2))
+                {
+                    total += 1;
+                }
+            }
+            return total;
+        }
+        protected void FoundAllNearbyShips(GameState state)
+        {
+            int current = currentNumHits(state);
+            if (prevTotal + current == state.SunkShipTotal())
+            {
+                searchNewShip = true;
+                prevTotal += current;
+            }
         }
 
         public override void PlaceShips(GameState playerState)

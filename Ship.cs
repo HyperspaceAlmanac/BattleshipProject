@@ -71,5 +71,10 @@ namespace BattleshipProject
                 allCoord.Add(new Tuple<int, int>(temp.Item1, temp.Item2));
             }
         }
+
+        public int GetPoints()
+        {
+            return shipSize;
+        }
     }
 }

@@ -235,9 +235,22 @@ namespace BattleshipProject
         {
             return moveHistory.Contains(new Tuple<int, int>(x, y));
         }
-
-        public int NumShipsRemaining()
+        public bool LocationHit(int x, int y)
         {
+            return boardState[x, y] == Location.Hit;
+        }
+
+        public int SunkShipTotal()
+        {
+            int total = 0;
+            foreach (Ship s in ships)
+            {
+                if (!s.IsAlive())
+                {
+                    total += s.GetPoints();
+                }
+            }
+            return total;
         }
     }
 }
