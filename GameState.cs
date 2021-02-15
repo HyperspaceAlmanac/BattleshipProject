@@ -21,10 +21,21 @@ namespace BattleshipProject
         private static readonly string TOPBORDER = "  A B C D E F G H I J";
         Location[,] boardState;
         List<Ship> ships;
+        List<Tuple<int, int>> allShipLocations;
         int numShots;
+
+        // Options for displaying current selected row / column
+        private int rowSelected;
+        private int columnSelected;
+        private bool highlightRow;
+        private bool highlightColumn;
+        // Temporarily make public
+        public bool opponentBoard;
 
         public GameState()
         {
+            highlightRow = false;
+            highlightColumn = false;
             boardState = new Location[BOARDWIDTH, BOARDHEIGHT];
             for (int i = 0; i < BOARDHEIGHT; i++)
             {
@@ -35,6 +46,8 @@ namespace BattleshipProject
             }
             numShots = 0;
             ships = new List<Ship>();
+            allShipLocations = new List<Tuple<int, int>>();
+            opponentBoard = true;
         }
 
         // check if game can continue
@@ -98,33 +111,112 @@ namespace BattleshipProject
             else if (location == Location.Hit)
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.Write(" x");
+                Console.Write(" o");
+                Console.ResetColor();
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Gray;
-                Console.Write(" o");
+                Console.Write(" x");
+                Console.ResetColor();
             }
-            Console.ResetColor();
                 
         }
+        public void DisplayAll()
+        {
+            DisplayShipState();
+            DisplayBoard();
+        }
+        private void DisplayShipState()
+        {
+            foreach (Ship s in ships)
+            {
+                s.DisplayState();
+            }
+            for (int i = 0; i < 4 + BOARDWIDTH * 2; i++)
+            {
+                Console.Write("=");
+            }
+            Console.WriteLine();
+        }
 
-        public void DisplayBoard()
+        private void DisplayBoard()
         {
             // Display letters at top
             Console.WriteLine(" " + TOPBORDER);
             for (int i = 0; i < boardState.GetLength(0); i++)
             {
-
                 Console.Write((i < 9 ? " " : "") + (i + 1));
-                  
+                if (opponentBoard && highlightRow && rowSelected == i)
+                {
+                    Console.BackgroundColor = ConsoleColor.White;
+                }
                 for (int j = 0; j < boardState.GetLength(1); j++)
                 {
+                    ConsoleColor prev = Console.BackgroundColor;
+                    if (opponentBoard && highlightColumn && columnSelected == j)
+                    {
+                        Console.BackgroundColor = ConsoleColor.White;
+                    }
+                    // Display your own board, check if this is a ship location
+                    else if (!opponentBoard)
+                    {
+                        if (allShipLocations.Contains(new Tuple<int, int>(i, j))) {
+                            Console.BackgroundColor = ConsoleColor.White;
+                        }
+                    }
                     DisplayLocation(boardState[i, j]);
+                    Console.BackgroundColor = prev;
                 }
+                Console.ResetColor();
                 Console.WriteLine();
             }
-            
+        }
+
+        // For manually testing adding in ships
+        public bool TestAddShip()
+        {
+            // Destroyer 1
+            Tuple<int, int>[] shipCoords = new Tuple<int, int>[2];
+            shipCoords[0] = new Tuple<int, int> (0, 0);
+            shipCoords[1] = new Tuple<int, int> (0, 1);
+
+            ships.Add(new Ship("Destroyer", shipCoords));
+
+            // Destroyer 2
+            shipCoords = new Tuple<int, int>[2];
+            shipCoords[0] = new Tuple<int, int>(3, 2);
+            shipCoords[1] = new Tuple<int, int>(4, 2);
+            ships.Add(new Ship("Destroyer", shipCoords));
+
+            shipCoords = new Tuple<int, int>[5];
+            shipCoords[0] = new Tuple<int, int>(6, 2);
+            shipCoords[1] = new Tuple<int, int>(6, 3);
+            shipCoords[2] = new Tuple<int, int>(6, 4);
+            shipCoords[3] = new Tuple<int, int>(6, 5);
+            shipCoords[4] = new Tuple<int, int>(6, 6);
+            ships.Add(new Ship("Aircraft Carrier", shipCoords));
+
+            return true;
+        }
+        // Change to private later
+        public void FillInShipLocations()
+        {
+            foreach (Ship s in ships)
+            {
+                s.FillInCoordinates(allShipLocations);
+            }
+        }
+        public void TestDisplayHighlight()
+        {
+            highlightRow = true;
+            rowSelected = 0;
+        }
+
+        public void RemoveHighlight()
+        {
+            highlightRow = false;
+            highlightColumn = false;
         }
     }
 }

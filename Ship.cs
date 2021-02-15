@@ -17,16 +17,18 @@ namespace BattleshipProject
         // handle rotation and confirming that the ship location is legal
         public Ship(string name, Tuple<int,int>[] coordinates)
         {
+            shipCoordinates = new HashSet<Tuple<int, int>>();
             shipName = name;
             shipSize = coordinates.Length;
             hits = 0;
+            // Deep copy
             for (int i = 0; i < coordinates.Length; i++) {
                 shipCoordinates.Add(coordinates[i]);
             }
         }
         public bool IsAlive()
         {
-            return hits == shipSize;
+            return hits < shipSize;
         }
 
         // It is the responsibility of the module calling this to ensure
@@ -44,7 +46,30 @@ namespace BattleshipProject
 
         public string ShipName()
         {
-            return shipName;
+            return shipName + $"({shipSize})";
+        }
+
+        public void DisplayState()
+        {
+            Console.Write(ShipName());
+            if (IsAlive())
+            {
+                Console.ForegroundColor = ConsoleColor.Green;
+                Console.WriteLine(" is in operation");
+            }
+            else
+            {
+                Console.ForegroundColor = ConsoleColor.Red;
+                Console.WriteLine(" has been sunk");
+            }
+            Console.ResetColor();
+        }
+
+        public void FillInCoordinates(List<Tuple<int, int>> allCoord) {
+            foreach (Tuple<int, int> temp in shipCoordinates)
+            {
+                allCoord.Add(new Tuple<int, int>(temp.Item1, temp.Item2));
+            }
         }
     }
 }
