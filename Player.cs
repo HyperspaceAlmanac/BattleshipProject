@@ -15,15 +15,19 @@ namespace BattleshipProject
     abstract class Player
     {
         protected int playerNum;
-        public Player(int num)
+        protected GameState ownBoard;
+        protected GameState opponentBoard;
+        public Player(int num, GameState ownBoard, GameState opponentBoard)
         {
+            this.ownBoard = ownBoard;
+            this.opponentBoard = opponentBoard;
             playerNum = num;
         }
-        public abstract void TakeTurn(GameState playerState, GameState opponentState);
+        public abstract void TakeTurn();
 
-        public abstract void PlaceShips(GameState playerState);
+        public abstract void PlaceShips();
 
-        protected bool ValidPlacement(Tuple<string, int> pair, int startX, int startY, Tuple<int, int> modifier, GameState playerState)
+        protected bool ValidPlacement(Tuple<string, int> pair, int startX, int startY, Tuple<int, int> modifier)
         {
             int modifiedX, modifiedY;
             for (int i = 0; i < pair.Item2; i++)
@@ -32,7 +36,7 @@ namespace BattleshipProject
                 modifiedY = startY + modifier.Item2 * i;
                 if (modifiedX < 0 || modifiedX >= GameState.BOARDWIDTH ||
                     modifiedY < 0 || modifiedY >= GameState.BOARDHEIGHT ||
-                    playerState.LocationOccupied(modifiedX, modifiedY))
+                    ownBoard.LocationOccupied(modifiedX, modifiedY))
                 {
                     return false;
                 }
@@ -41,14 +45,19 @@ namespace BattleshipProject
         }
 
         // Responsibility of method calling this to check correctness
-        protected void AddShip(int x, int y, Tuple<string, int> pair, Tuple<int, int> modifier, GameState playerState)
+        protected void AddShip(int x, int y, Tuple<string, int> pair, Tuple<int, int> modifier)
         {
             Tuple<int, int>[] coord = new Tuple<int, int>[pair.Item2];
             for (int i = 0; i < pair.Item2; i++)
             {
                 coord[i] = new Tuple<int, int>(x + i * modifier.Item1, y + i * modifier.Item2);
             }
-            playerState.AddShip(new Ship(pair.Item1, coord));
+            ownBoard.AddShip(new Ship(pair.Item1, coord));
+        }
+
+        public bool AllShipsSunk()
+        {
+            return ownBoard.AllShipsSunk();
         }
     }
 }

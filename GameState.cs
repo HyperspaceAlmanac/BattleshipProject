@@ -37,7 +37,7 @@ namespace BattleshipProject
         // Temporarily make public
         public bool opponentBoard;
 
-        public GameState(bool opponentBoard)
+        public GameState()
         {
             highlightRow = false;
             highlightColumn = false;
@@ -53,7 +53,7 @@ namespace BattleshipProject
             ships = new List<Ship>();
             allShipLocations = new List<Tuple<int, int>>();
             moveHistory = new HashSet<Tuple<int, int>>();
-            this.opponentBoard = opponentBoard;
+            this.opponentBoard = true;
         }
 
         // check if game can continue
@@ -139,7 +139,9 @@ namespace BattleshipProject
             foreach (Ship s in ships)
             {
                 s.DisplayState();
+                Console.Write(" | ");
             }
+            Console.WriteLine();
             for (int i = 0; i < 4 + BOARDWIDTH * 2; i++)
             {
                 Console.Write("=");
@@ -220,9 +222,13 @@ namespace BattleshipProject
             highlightColumn = false;
         }
 
-        public void TogglePlayer()
+        public void DisplayOpponentBoard()
         {
-            opponentBoard = !opponentBoard;
+            opponentBoard = true;
+        }
+        public void DisplayOwnBoard()
+        {
+            opponentBoard = false;
         }
 
         public bool LocationOccupied(int x, int y)

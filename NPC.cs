@@ -22,7 +22,7 @@ namespace BattleshipProject
         protected int turnNumber;
         protected bool searchNewShip;
         protected int prevTotal;
-        public NPC(int num) : base(num)
+        public NPC(int num, GameState ownBoard, GameState opponentBoard) : base(num, ownBoard, opponentBoard)
         {
             if (USE_RNG_SEED)
             {
@@ -36,26 +36,33 @@ namespace BattleshipProject
             turnNumber = 0;
             searchNewShip = true;
         }
-        public override void TakeTurn(GameState ownState, GameState opponentState)
+        public override void TakeTurn()
         {
+            Console.Clear();
+            ownBoard.DisplayOwnBoard();
+            opponentBoard.DisplayOwnBoard();
+            //opponentBoard.DisplayOpponentBoard();
             turnNumber += 1;
             // Need differnt logic for first two turns before NPC has seen 2 ships
             if (searchNewShip)
             {
-                CompletelyRandom(opponentState);
+                CompletelyRandom();
             } else {
                 // Based on if prev is hit or miss, choose new action
                 // If prev missed, then try another legal adjacent move
                 // If prev hit, and there is hit before it, continue this trajectory
-                Nextmove(opponentState);
+                Nextmove();
             }
             // For now, thinking of keeping track of previous 2 hits
-            ownState.DisplayAll();
-            opponentState.DisplayAll();
+            Console.WriteLine($"Player {playerNum} turn");
+            Console.WriteLine("Opponent Board State");
+            opponentBoard.DisplayAll();
+            Console.WriteLine("Own Board");
+            ownBoard.DisplayAll();
             EndTurn();
         }
 
-        protected void CompletelyRandom(GameState opponentState)
+        protected void CompletelyRandom()
         {
             bool done = false;
             int x, y;
@@ -64,9 +71,9 @@ namespace BattleshipProject
             {
                 x = rand.Next(GameState.BOARDHEIGHT);
                 y = rand.Next(GameState.BOARDWIDTH);
-                if (opponentState.AvailableMove(x, y))
+                if (opponentBoard.AvailableMove(x, y))
                 {
-                    result = opponentState.MakeMove(x, y);
+                    result = opponentBoard.MakeMove(x, y);
                     if (result)
                     {
                         currentSearch = new HashSet<Tuple<int, int>>();
@@ -80,7 +87,7 @@ namespace BattleshipProject
         // In the interest of time, I will not make the AI completely optimal
         // Some ship placement can be really tricky and will require AI to keep track of order of moves
         // For now I do not want to do that
-        protected void Nextmove(GameState state)
+        protected void Nextmove()
         {
             List<int[]> soFar = new List<int[]>();
             // NPC will randomly select a hit, and use DFS to prioritize adjacent hits
@@ -100,7 +107,7 @@ namespace BattleshipProject
             foreach (Tuple<int, int> t in currentSearch) {
                 foreach (Tuple<int, int> direction in DIRECTIONS) {
                     temp = new Tuple<int, int>(t.Item1 + direction.Item1, t.Item2 + direction.Item2);
-                    if (ValidMove(temp.Item1, temp.Item2, state)) {
+                    if (ValidMove(temp.Item1, temp.Item2)) {
                         if (!highPriority.Contains(temp))
                         {
                             highPriority.Add(temp);
@@ -118,12 +125,12 @@ namespace BattleshipProject
             if (highPriority.Count > 0)
             {
                 result = highPriorityList[rand.Next(highPriorityList.Count)];
-                state.MakeMove(result[0], result[1]);
+                opponentBoard.MakeMove(result[0], result[1]);
             }
             else if (lowPriority.Count > 0)
             {
                 result = lowPriorityList[rand.Next(highPriorityList.Count)];
-                state.MakeMove(result[0], result[1]);
+                opponentBoard.MakeMove(result[0], result[1]);
             }
             else
             {
@@ -132,7 +139,7 @@ namespace BattleshipProject
             
 
             // Check if AI will continue to search for ships or go completely random next turn
-            FoundAllNearbyShips(state);
+            FoundAllNearbyShips();
         }
 
 
@@ -141,13 +148,13 @@ namespace BattleshipProject
         // High priority are ones with 2 moves adjacent in a line, low is everything else.
         // Will not bother checking for duplicates. Just have locations taht overlap have higher chance of being picked
 
-        protected bool ValidMove(int x, int y, GameState state)
+        protected bool ValidMove(int x, int y)
         {
             if (x < 0 || x >= GameState.BOARDHEIGHT || y < 0 || y >= GameState.BOARDWIDTH)
             {
                 return false;
             }
-            return state.IsEmpty(x, y);
+            return opponentBoard.IsEmpty(x, y);
         }
         protected bool TwoAdjacent(int x, int y, GameState state)
         {
@@ -166,22 +173,23 @@ namespace BattleshipProject
  
         // Try best moves to sink this ship
 
-        protected void FoundAllNearbyShips(GameState state)
+        protected void FoundAllNearbyShips()
         {
-            if (prevTotal + currentSearch.Count == state.SunkShipTotal())
+            if (prevTotal + currentSearch.Count == opponentBoard.SunkShipTotal())
             {
                 searchNewShip = true;
                 prevTotal += currentSearch.Count;
             }
         }
 
-        public override void PlaceShips(GameState playerState)
+        public override void PlaceShips()
         {
             int x;
             int y;
             bool placed;
             Tuple<int, int> modifier;
-
+            
+            Console.Clear();
             foreach (Tuple<string, int> pair in GameEngine.PIECES)
             {
                 placed = false;
@@ -192,15 +200,16 @@ namespace BattleshipProject
                     y = rand.Next(GameState.BOARDWIDTH);
                     modifier = DIRECTIONS[rand.Next(DIRECTIONS.Length)];
                     
-                    if (ValidPlacement(pair, x, y, modifier, playerState)) {
-                        AddShip(x, y, pair, modifier, playerState);
+                    if (ValidPlacement(pair, x, y, modifier)) {
+                        AddShip(x, y, pair, modifier);
                         placed = true;
                     }
                 }
             }
             Console.WriteLine("The NPC has finished placing its ships");
             // DEBUG1
-            playerState.DisplayAll();
+            ownBoard.DisplayOwnBoard();
+            ownBoard.DisplayAll();
             EndTurn();
         }
 

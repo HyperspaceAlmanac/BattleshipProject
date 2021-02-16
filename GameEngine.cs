@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 /**
  * Disclaimer: I do not own the rights to Battleship.
@@ -16,8 +17,6 @@ namespace BattleshipProject
         private bool playerOneTurn;
         private Player p1;
         private Player p2;
-        private GameState state1;
-        private GameState state2;
         public static readonly Tuple<string, int>[] PIECES = new Tuple<string, int>[] {
             new Tuple<string, int>("destroyer", 2),
             new Tuple<string, int>("destroyer", 2),
@@ -48,32 +47,28 @@ namespace BattleshipProject
                 gameOver = false;
                 DisplayIntro();
                 SelectMode();
-                state1 = new GameState(false);
-                state2 = new GameState(true);
-                p1.PlaceShips(state1);
-                state2.TogglePlayer();
-                p2.PlaceShips(state2);
-                state2.TogglePlayer();
+
+                p1.PlaceShips();
+                p2.PlaceShips();
                 while (!gameOver)
                 {
                     if (playerOneTurn)
                     {
-                        p1.TakeTurn(state1, state2);
+                        p1.TakeTurn();
                     }
                     else
                     {
-                        p2.TakeTurn(state2, state1);
+                        p2.TakeTurn();
                     }
-                    if (state1.AllShipsSunk()) {
+                    if (p1.AllShipsSunk()) {
                         DisplayWinner(true);
                         gameOver = true;
-                    } else if (state2.AllShipsSunk())
+                    } else if (p2.AllShipsSunk())
                     {
                         DisplayWinner(false);
                         gameOver = true;
                     }
-                    state1.TogglePlayer();
-                    state2.TogglePlayer();
+                    playerOneTurn = !playerOneTurn;
                 }
                 exitGame = RestartGame();
             }
@@ -89,19 +84,27 @@ namespace BattleshipProject
                 switch (val)
                 {
                     case "1":
-                        p1 = new HumanPlayer(1);
-                        p2 = new NPC(2);
-                        done = true;
-                        break;
                     case "2":
-                        p1 = new HumanPlayer(1);
-                        p2 = new HumanPlayer(2);
-                        done = true;
-                        break;
-                    // Debug only
-                    case "3":
-                        p1 = new NPC(1);
-                        p2 = new NPC(2);
+                    case "3": // comment out if not debuggign
+                        GameState state1 = new GameState();
+                        GameState state2 = new GameState();
+                        if (val == "3")
+                        {// Debug only, comment out when not debugging NPC
+                            p1 = new NPC(1, state1, state2);
+                            Thread.Sleep(100);
+                            p2 = new NPC(2, state2, state1);
+                        }
+                        else if (val == "1")
+                        {
+                            p1 = new HumanPlayer(1, state1, state2);
+                            p1 = new HumanPlayer(2, state2, state1);
+                        }
+                        else
+                        {
+                            p1 = new HumanPlayer(1, state1, state2);
+                            p2 = new NPC(2, state2, state1);
+                        }
+
                         done = true;
                         break;
                     default:

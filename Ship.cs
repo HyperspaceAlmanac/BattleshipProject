@@ -55,16 +55,16 @@ namespace BattleshipProject
 
         public void DisplayState()
         {
-            Console.Write(ShipName());
+            Console.Write(ShipName() + ":");
             if (IsAlive())
             {
                 Console.ForegroundColor = ConsoleColor.Green;
-                Console.WriteLine(" is in operation");
+                Console.Write(" Alive");
             }
             else
             {
                 Console.ForegroundColor = ConsoleColor.Red;
-                Console.WriteLine(" has been sunk");
+                Console.Write(" Sunk");
             }
             Console.ResetColor();
         }
