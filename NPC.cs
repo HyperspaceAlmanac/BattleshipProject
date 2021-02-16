@@ -39,8 +39,6 @@ namespace BattleshipProject
         public override void TakeTurn()
         {
             Console.Clear();
-            ownBoard.DisplayOwnBoard();
-            opponentBoard.DisplayOwnBoard();
             //opponentBoard.DisplayOpponentBoard();
             turnNumber += 1;
             // Need differnt logic for first two turns before NPC has seen 2 ships
@@ -54,11 +52,7 @@ namespace BattleshipProject
                 Nextmove();
             }
             // For now, thinking of keeping track of previous 2 hits
-            Console.WriteLine($"Player {playerNum} turn");
-            Console.WriteLine("Opponent Board State");
-            opponentBoard.DisplayAll();
-            Console.WriteLine("Own Board");
-            ownBoard.DisplayAll();
+
             EndTurn();
         }
 
@@ -74,10 +68,13 @@ namespace BattleshipProject
                 if (opponentBoard.AvailableMove(x, y))
                 {
                     result = opponentBoard.MakeMove(x, y);
+                    opponentBoard.DisplayAction(x, y, $"NPC player{playerNum}");
+                    opponentBoard.DisplayAll();
                     if (result)
                     {
                         currentSearch = new HashSet<Tuple<int, int>>();
-                        searchNewShip = true;
+                        currentSearch.Add(new Tuple<int, int>(x, y));
+                        searchNewShip = false;
                     }
                     done = true;
                 }
@@ -94,7 +91,6 @@ namespace BattleshipProject
             // Continue Adjacent path if able, otherwise, choose any legal move
             // Randomly choose to go thorugh direction list forward or backward
             int index = rand.Next(currentSearch.Count);
-            int current = 0;
 
             //gotta assign it to something
             Tuple<int, int> temp;
@@ -107,11 +103,14 @@ namespace BattleshipProject
             foreach (Tuple<int, int> t in currentSearch) {
                 foreach (Tuple<int, int> direction in DIRECTIONS) {
                     temp = new Tuple<int, int>(t.Item1 + direction.Item1, t.Item2 + direction.Item2);
+                    // check if the move is good
                     if (ValidMove(temp.Item1, temp.Item2)) {
-                        if (!highPriority.Contains(temp))
-                        {
-                            highPriority.Add(temp);
-                            highPriorityList.Add(new int[] {temp.Item1, temp.Item2});
+                        if (TwoAdjacent(temp.Item1, temp.Item2)) {
+                            if (!highPriority.Contains(temp))
+                            {
+                                highPriority.Add(temp);
+                                highPriorityList.Add(new int[] { temp.Item1, temp.Item2 });
+                            }
                         }
                         else if (!lowPriority.Contains(temp))
                         {
@@ -125,18 +124,24 @@ namespace BattleshipProject
             if (highPriority.Count > 0)
             {
                 result = highPriorityList[rand.Next(highPriorityList.Count)];
-                opponentBoard.MakeMove(result[0], result[1]);
             }
             else if (lowPriority.Count > 0)
             {
                 result = lowPriorityList[rand.Next(highPriorityList.Count)];
-                opponentBoard.MakeMove(result[0], result[1]);
             }
             else
             {
+                result = new int[] { 0, 0 };
                 Console.WriteLine("Something went seriously wrong at choose next NPC move");
             }
-            
+            opponentBoard.MakeMove(result[0], result[1]);
+            if (opponentBoard.IsHit(result[0], result[1]))
+            {
+                currentSearch.Add(new Tuple<int, int>(result[0], result[1]));
+            }
+            opponentBoard.DisplayAction(result[0], result[1], $"NPC player{playerNum}");
+            opponentBoard.DisplayAll();
+
 
             // Check if AI will continue to search for ships or go completely random next turn
             FoundAllNearbyShips();
@@ -156,7 +161,7 @@ namespace BattleshipProject
             }
             return opponentBoard.IsEmpty(x, y);
         }
-        protected bool TwoAdjacent(int x, int y, GameState state)
+        protected bool TwoAdjacent(int x, int y)
         {
             foreach (Tuple<int, int> tuple in DIRECTIONS)
             {
@@ -190,6 +195,8 @@ namespace BattleshipProject
             Tuple<int, int> modifier;
             
             Console.Clear();
+            ownBoard.DisplayOwnBoard();
+            ownBoard.DisplayAll();
             foreach (Tuple<string, int> pair in GameEngine.PIECES)
             {
                 placed = false;
@@ -208,8 +215,6 @@ namespace BattleshipProject
             }
             Console.WriteLine("The NPC has finished placing its ships");
             // DEBUG1
-            ownBoard.DisplayOwnBoard();
-            ownBoard.DisplayAll();
             EndTurn();
         }
 

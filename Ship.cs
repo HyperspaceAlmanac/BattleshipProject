@@ -58,7 +58,7 @@ namespace BattleshipProject
             Console.Write(ShipName() + ":");
             if (IsAlive())
             {
-                Console.ForegroundColor = ConsoleColor.Green;
+                Console.ForegroundColor = ConsoleColor.Magenta;
                 Console.Write(" Alive");
             }
             else

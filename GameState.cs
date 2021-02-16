@@ -20,9 +20,16 @@ namespace BattleshipProject
     class GameState
     {
         // String representation of hits, misses, and ships
+        public static readonly ConsoleColor ALIVECOLOR = ConsoleColor.Magenta;
+        public static readonly ConsoleColor SUNKCOLOR = ConsoleColor.Red;
+        public static readonly ConsoleColor SHIPCOLOR = ConsoleColor.White;
+        public static readonly ConsoleColor HIGHLIGHT = ConsoleColor.White;
+        public static readonly ConsoleColor REPORT = ConsoleColor.DarkBlue;
+        public static readonly ConsoleColor REPORTBACKGROUND = ConsoleColor.Gray;
         public static readonly int BOARDWIDTH = 10;
         public static readonly int BOARDHEIGHT = 10;
         private static readonly string TOPBORDER = "  A B C D E F G H I J";
+        private static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
         List<Tuple<int, int>> allShipLocations;
@@ -74,7 +81,23 @@ namespace BattleshipProject
             }
             return true;
         }
-
+        public void DisplayAction(int x, int y, string player)
+        {
+            Console.BackgroundColor = REPORTBACKGROUND;
+            Console.ForegroundColor = REPORT;
+            Console.Write(player + " chose " + NUMTOALPHABET[y].ToString() + (x + 1) + ".");
+            if (boardState[x, y] == Location.Hit)
+            {
+                Console.ForegroundColor = SUNKCOLOR;
+            }
+            else
+            {
+                Console.ForegroundColor = ALIVECOLOR;
+            }
+            Console.ResetColor();
+            Console.WriteLine("It was a " + (boardState[x,y] == Location.Hit ? "Hit" : "Miss") + "!");
+            Console.ResetColor();
+        }
         public bool MakeMove(int x, int y)
         {
             // Check that coordinates are correct
@@ -93,20 +116,12 @@ namespace BattleshipProject
                     }
                     boardState[x, y] = current;
                     numShots += 1;
+                    moveHistory.Add(new Tuple<int, int>(x, y));
                     return current == Location.Hit;
                 }
             }
             Console.WriteLine("Should not reach here! Need to debug");
             return false;
-        }
-
-        // use this to experiment with displayign color to console
-        public static void ColorDisplayTest()
-        {
-            Console.ForegroundColor = ConsoleColor.Cyan;
-            Console.Write("Cyan");
-            Console.ForegroundColor = ConsoleColor.Green;
-            Console.Write("Green");
         }
 
         private void DisplayLocation(Location location)
@@ -117,13 +132,13 @@ namespace BattleshipProject
             }
             else if (location == Location.Hit)
             {
-                Console.ForegroundColor = ConsoleColor.Red;
+                Console.ForegroundColor = SUNKCOLOR;
                 Console.Write(" o");
                 Console.ResetColor();
             }
             else
             {
-                Console.ForegroundColor = ConsoleColor.Gray;
+                Console.ForegroundColor = ALIVECOLOR;
                 Console.Write(" x");
                 Console.ResetColor();
             }
@@ -158,20 +173,20 @@ namespace BattleshipProject
                 Console.Write((i < 9 ? " " : "") + (i + 1));
                 if (opponentBoard && highlightRow && rowSelected == i)
                 {
-                    Console.BackgroundColor = ConsoleColor.White;
+                    Console.BackgroundColor = HIGHLIGHT;
                 }
                 for (int j = 0; j < boardState.GetLength(1); j++)
                 {
                     ConsoleColor prev = Console.BackgroundColor;
                     if (opponentBoard && highlightColumn && columnSelected == j)
                     {
-                        Console.BackgroundColor = ConsoleColor.White;
+                        Console.BackgroundColor = HIGHLIGHT;
                     }
                     // Display your own board, check if this is a ship location
                     else if (!opponentBoard)
                     {
                         if (allShipLocations.Contains(new Tuple<int, int>(i, j))) {
-                            Console.BackgroundColor = ConsoleColor.White;
+                            Console.BackgroundColor = HIGHLIGHT;
                         }
                     }
                     DisplayLocation(boardState[i, j]);
@@ -271,6 +286,11 @@ namespace BattleshipProject
             }
             Console.WriteLine("Need to debug");
             return false;
+        }
+
+        public bool IsHit(int x, int y)
+        {
+            return boardState[x, y] == Location.Hit;
         }
     }
 }

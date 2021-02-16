@@ -115,10 +115,24 @@ namespace BattleshipProject
 
         private void DisplayWinner(bool playerOne)
         {
+            Console.WriteLine("============================");
+            Console.WriteLine("Player" + (playerOne ? 1 : 2) + " is the winner!");
+            Console.WriteLine("============================");
         }
 
+        // Maybe a bit confusing, but this method saves to the variable "exit"
+        // Return false to replay, otherwise exit the game
         private bool RestartGame() {
-            return false;
+            Console.WriteLine("Would you like to play again? Please Enter \"yes\" to play again, otherwise the game will exit");
+            string val = Console.ReadLine();
+            if (val == "yes")
+            {
+                return false;
+            }
+            else
+            {
+                return true;
+            }
         }
     }
 }
