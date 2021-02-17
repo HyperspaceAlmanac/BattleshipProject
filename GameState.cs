@@ -20,15 +20,17 @@ namespace BattleshipProject
     class GameState
     {
         // String representation of hits, misses, and ships
-        public static readonly ConsoleColor ALIVECOLOR = ConsoleColor.Magenta;
-        public static readonly ConsoleColor SUNKCOLOR = ConsoleColor.Red;
-        public static readonly ConsoleColor SHIPCOLOR = ConsoleColor.White;
+        public static readonly ConsoleColor ALIVE_COLOR = ConsoleColor.Magenta;
+        public static readonly ConsoleColor SUNK_COLOR = ConsoleColor.Red;
+        public static readonly ConsoleColor SHIP_COLOR = ConsoleColor.White;
         public static readonly ConsoleColor HIGHLIGHT = ConsoleColor.White;
         public static readonly ConsoleColor REPORT = ConsoleColor.DarkBlue;
-        public static readonly ConsoleColor REPORTBACKGROUND = ConsoleColor.Gray;
-        public static readonly int BOARDWIDTH = 10;
-        public static readonly int BOARDHEIGHT = 10;
-        private static readonly string TOPBORDER = "  A B C D E F G H I J";
+        public static readonly ConsoleColor REPORT_BACKGROUND = ConsoleColor.Gray;
+        public static readonly ConsoleColor PLACE_SHIP_COLOR = ConsoleColor.Green;
+        public static readonly ConsoleColor SHIP_OVERLAP = ConsoleColor.DarkGray;
+        public static readonly int BOARDWIDTH = 20;
+        public static readonly int BOARDHEIGHT = 20;
+        private static readonly string TOPBORDER = "  A B C D E F G H I J K L M O P Q R S T U ";
         private static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
@@ -83,20 +85,32 @@ namespace BattleshipProject
         }
         public void DisplayAction(int x, int y, string player)
         {
-            Console.BackgroundColor = REPORTBACKGROUND;
+            Console.BackgroundColor = REPORT_BACKGROUND;
             Console.ForegroundColor = REPORT;
             Console.Write(player + " chose " + NUMTOALPHABET[y].ToString() + (x + 1) + ".");
             if (boardState[x, y] == Location.Hit)
             {
-                Console.ForegroundColor = SUNKCOLOR;
+                Console.ForegroundColor = SUNK_COLOR;
             }
             else
             {
-                Console.ForegroundColor = ALIVECOLOR;
+                Console.ForegroundColor = ALIVE_COLOR;
             }
             Console.ResetColor();
             Console.WriteLine("It was a " + (boardState[x,y] == Location.Hit ? "Hit" : "Miss") + "!");
             Console.ResetColor();
+        }
+
+        public bool ValidPlacement(Tuple<int, int>[] shipCoordinates)
+        {
+            foreach(Tuple<int,int> coordinate in shipCoordinates)
+            {
+                if (LocationOccupied(coordinate.Item1, coordinate.Item2))
+                {
+                    return true;
+                }
+            }
+            return false;
         }
         public bool MakeMove(int x, int y)
         {
@@ -132,13 +146,13 @@ namespace BattleshipProject
             }
             else if (location == Location.Hit)
             {
-                Console.ForegroundColor = SUNKCOLOR;
+                Console.ForegroundColor = SUNK_COLOR;
                 Console.Write(" o");
                 Console.ResetColor();
             }
             else
             {
-                Console.ForegroundColor = ALIVECOLOR;
+                Console.ForegroundColor = ALIVE_COLOR;
                 Console.Write(" x");
                 Console.ResetColor();
             }
@@ -164,10 +178,11 @@ namespace BattleshipProject
             Console.WriteLine();
         }
 
-        private void DisplayBoard()
+        private void DisplayBoard(bool checkOverlap = false, Tuple<int, int>[] newShipCoords = null)
         {
             // Display letters at top
             Console.WriteLine(" " + TOPBORDER);
+            bool shipLocation;
             for (int i = 0; i < boardState.GetLength(0); i++)
             {
                 Console.Write((i < 9 ? " " : "") + (i + 1));
@@ -185,8 +200,28 @@ namespace BattleshipProject
                     // Display your own board, check if this is a ship location
                     else if (!opponentBoard)
                     {
-                        if (allShipLocations.Contains(new Tuple<int, int>(i, j))) {
-                            Console.BackgroundColor = HIGHLIGHT;
+                        shipLocation = allShipLocations.Contains(new Tuple<int, int>(i, j));
+                        // now need to check for overlap
+                        if (checkOverlap)
+                        {
+                            foreach (Tuple<int, int> coord in newShipCoords)
+                            {
+                                if (coord.Item1 == i && coord.Item2 == j)
+                                {
+                                    if (shipLocation)
+                                    {
+                                        Console.BackgroundColor = SHIP_OVERLAP;
+                                    }
+                                    else
+                                    {
+                                        Console.BackgroundColor = PLACE_SHIP_COLOR;
+                                    }
+                                }
+                            }
+                        }
+                        else if (shipLocation)
+                        {
+                            Console.BackgroundColor = SHIP_COLOR;
                         }
                     }
                     DisplayLocation(boardState[i, j]);

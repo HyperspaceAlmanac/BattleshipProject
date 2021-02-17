@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using System.Threading;
 
 /**
  * Disclaimer: I do not own the rights to Battleship.
@@ -52,8 +53,6 @@ namespace BattleshipProject
                 Nextmove();
             }
             // For now, thinking of keeping track of previous 2 hits
-
-            EndTurn();
         }
 
         protected void CompletelyRandom()
@@ -197,7 +196,7 @@ namespace BattleshipProject
             Console.Clear();
             ownBoard.DisplayOwnBoard();
             ownBoard.DisplayAll();
-            foreach (Tuple<string, int> pair in GameEngine.PIECES)
+            foreach (Tuple<string, int> pair in Ship.PIECES)
             {
                 placed = false;
                 while (!placed)
@@ -206,22 +205,21 @@ namespace BattleshipProject
                     x = rand.Next(GameState.BOARDHEIGHT);
                     y = rand.Next(GameState.BOARDWIDTH);
                     modifier = DIRECTIONS[rand.Next(DIRECTIONS.Length)];
-                    
-                    if (ValidPlacement(pair, x, y, modifier)) {
-                        AddShip(x, y, pair, modifier);
+
+                    Tuple<int, int>[] shipCoordinates = Ship.ShipCoordinates(pair, x, y, modifier);
+                    if (shipCoordinates != null && ownBoard.ValidPlacement(shipCoordinates)) {
+                        ownBoard.AddShip(new Ship(pair.Item1, shipCoordinates));
                         placed = true;
                     }
                 }
             }
             Console.WriteLine("The NPC has finished placing its ships");
-            // DEBUG1
-            EndTurn();
         }
 
-        private void EndTurn()
+        public override void SwitchPlayer()
         {
             Console.WriteLine("The NPC has finished making its decision. Press any key to continue");
-            Console.ReadKey();
+            PlayerControl.PressKeyToContinue();
         }
     }
 }

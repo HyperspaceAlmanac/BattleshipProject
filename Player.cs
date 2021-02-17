@@ -27,33 +27,10 @@ namespace BattleshipProject
 
         public abstract void PlaceShips();
 
-        protected bool ValidPlacement(Tuple<string, int> pair, int startX, int startY, Tuple<int, int> modifier)
-        {
-            int modifiedX, modifiedY;
-            for (int i = 0; i < pair.Item2; i++)
-            {
-                modifiedX = startX + modifier.Item1 * i;
-                modifiedY = startY + modifier.Item2 * i;
-                if (modifiedX < 0 || modifiedX >= GameState.BOARDWIDTH ||
-                    modifiedY < 0 || modifiedY >= GameState.BOARDHEIGHT ||
-                    ownBoard.LocationOccupied(modifiedX, modifiedY))
-                {
-                    return false;
-                }
-            }
-            return true;
-        }
+        // Display screen when switching between players
+        public abstract void SwitchPlayer();
 
         // Responsibility of method calling this to check correctness
-        protected void AddShip(int x, int y, Tuple<string, int> pair, Tuple<int, int> modifier)
-        {
-            Tuple<int, int>[] coord = new Tuple<int, int>[pair.Item2];
-            for (int i = 0; i < pair.Item2; i++)
-            {
-                coord[i] = new Tuple<int, int>(x + i * modifier.Item1, y + i * modifier.Item2);
-            }
-            ownBoard.AddShip(new Ship(pair.Item1, coord));
-        }
 
         public bool AllShipsSunk()
         {

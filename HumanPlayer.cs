@@ -47,5 +47,14 @@ namespace BattleshipProject
             Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
             Console.WriteLine("Use Escape key to cancel, and space to confirm");
         }
+
+        public override void SwitchPlayer()
+        {
+            int otherPlayer = playerNum == 1 ? 1 : 2;
+            Console.Clear();
+            Console.WriteLine("Player" + playerNum + "'s turn has finished.");
+            Console.WriteLine("Player" + otherPlayer + ": please press any key to continue");
+            PlayerControl.PressKeyToContinue();
+        }
     }
 }

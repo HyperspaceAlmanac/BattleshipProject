@@ -17,12 +17,6 @@ namespace BattleshipProject
         private bool playerOneTurn;
         private Player p1;
         private Player p2;
-        public static readonly Tuple<string, int>[] PIECES = new Tuple<string, int>[] {
-            new Tuple<string, int>("destroyer", 2),
-            new Tuple<string, int>("destroyer", 2),
-            new Tuple<string, int>("submarine", 3),
-            new Tuple<string, int>("battleship", 4),
-            new Tuple<string, int>("aircraft carrier", 5)};
 
         public GameEngine()
         {
@@ -49,16 +43,20 @@ namespace BattleshipProject
                 SelectMode();
 
                 p1.PlaceShips();
+                p1.SwitchPlayer();
                 p2.PlaceShips();
+                p2.SwitchPlayer();
                 while (!gameOver)
                 {
                     if (playerOneTurn)
                     {
                         p1.TakeTurn();
+                        p1.SwitchPlayer();
                     }
                     else
                     {
                         p2.TakeTurn();
+                        p1.SwitchPlayer();
                     }
                     if (p1.AllShipsSunk()) {
                         DisplayWinner(true);
