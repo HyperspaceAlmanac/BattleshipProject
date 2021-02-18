@@ -11,7 +11,7 @@ namespace BattleshipProject
     {
         enum PLACEMENT_STATUS
         {
-            PLACED_OK,
+            CAN_PLACE,
             PLACEMENT_ERROR,
             CONTINUE
         }
@@ -21,6 +21,7 @@ namespace BattleshipProject
 
         public override void PerformDuty()
         {
+            game.DisplayOwnBoard();
             PlaceShips();
         }
 
@@ -44,13 +45,13 @@ namespace BattleshipProject
                 while (!done)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Player{playerNum}: Please place the size {piece.Item2} {piece.Item1}");
+                    Console.WriteLine($"Player{playerNum}'s turn to deploy their fleet");
                     DisplayShipPlacementControls();
                     // Display status related to controls
                     switch (status)
                     {
                         case PLACEMENT_STATUS.CONTINUE:
-                            Console.WriteLine("Waiting to place ship");
+                            Console.WriteLine($"Please place the size {piece.Item2} {piece.Item1}");
                             break;
                         case PLACEMENT_STATUS.PLACEMENT_ERROR:
                             Console.ForegroundColor = ERROR_COLOR;
@@ -65,7 +66,7 @@ namespace BattleshipProject
                     game.DisplayPlaceShip(shipCoordinates);
                     // if tried to 
                     status = PlaceShipCommands(shipCoordinates);
-                    if (status == PLACEMENT_STATUS.PLACED_OK)
+                    if (status == PLACEMENT_STATUS.CAN_PLACE)
                     {
                         if (game.ValidPlacement(shipCoordinates))
                         {
@@ -85,23 +86,64 @@ namespace BattleshipProject
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
+                    TryToShift(coordinates, 0, -1);
                     break;
                 case ConsoleKey.RightArrow:
+                    TryToShift(coordinates, 0, 1);
                     break;
                 case ConsoleKey.UpArrow:
+                    TryToShift(coordinates, -1, 0);
                     break;
                 case ConsoleKey.DownArrow:
+                    TryToShift(coordinates, 1, 0);
                     break;
                 case ConsoleKey.Spacebar:
-                    break;
+                case ConsoleKey.Enter:
+                    if (game.ValidPlacement(coordinates))
+                    {
+                        return PLACEMENT_STATUS.CAN_PLACE;
+                    }
+                    else
+                    {
+                        return PLACEMENT_STATUS.PLACEMENT_ERROR;
+                    }
                 case ConsoleKey.R:
+                    RotateShip(coordinates);
                     break;
                 default:
                     break;
             }
 
-            Thread.Sleep(100);
             return PLACEMENT_STATUS.CONTINUE;
+        }
+
+        // General function to move ship by 1 space if possible
+        private void TryToShift(Tuple<int, int>[] coordinates, int xShift, int yShift)
+        {
+            bool canMove = true;
+            int x, y;
+            foreach (Tuple<int, int> location in coordinates)
+            {
+                x = location.Item1 + xShift;
+                y = location.Item2 + yShift;
+                if (x < 0 || x >= GameState.BOARDHEIGHT || y < 0 || y >= GameState.BOARDWIDTH)
+                {
+                    canMove = false;
+                    break;
+                }
+            }
+
+            if (canMove)
+            {
+                for (int i = 0; i < coordinates.Length; i++)
+                {
+                    coordinates[i] = new Tuple<int, int>(coordinates[i].Item1 + xShift, coordinates[i].Item2 + yShift);
+                }
+            }
+        }
+
+        private void RotateShip(Tuple<int, int>[] coordinates)
+        {
         }
     }
 }

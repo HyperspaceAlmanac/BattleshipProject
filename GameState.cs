@@ -107,10 +107,10 @@ namespace BattleshipProject
             {
                 if (LocationOccupied(coordinate.Item1, coordinate.Item2))
                 {
-                    return true;
+                    return false;
                 }
             }
-            return false;
+            return true;
         }
         public bool MakeMove(int x, int y)
         {
@@ -222,6 +222,10 @@ namespace BattleshipProject
                                     {
                                         Console.BackgroundColor = PLACE_SHIP_COLOR;
                                     }
+                                }
+                                else if (shipLocation)
+                                {
+                                    Console.BackgroundColor = SHIP_COLOR;
                                 }
                             }
                         }

@@ -38,7 +38,7 @@ namespace BattleshipProject
 
         protected void DisplayShipPlacementControls()
         {
-            Console.WriteLine("Please use Arrow keys to move the ship around.\n\"r\" key to rotate clockwise by 90 degrees, and spacebar to confirm placement");
+            Console.WriteLine("Please use Arrow keys to move the ship around.\n\"r\" key to rotate clockwise by 90 degrees, and spacebar or Enter to confirm placement");
         }
 
     }
