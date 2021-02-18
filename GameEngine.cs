@@ -95,7 +95,7 @@ namespace BattleshipProject
                         else if (val == "1")
                         {
                             p1 = new HumanPlayer(1, state1, state2);
-                            p1 = new HumanPlayer(2, state2, state1);
+                            p2 = new HumanPlayer(2, state2, state1);
                         }
                         else
                         {

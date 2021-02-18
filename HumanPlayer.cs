@@ -14,7 +14,7 @@ namespace BattleshipProject
     {
         public HumanPlayer(int num, GameState ownBoard, GameState opponentBoard) : base(num, ownBoard, opponentBoard)
         {
-
+            PlayerControl controls = new PlayerControl(ownBoard, num);
         }
         public override void TakeTurn()
         {
@@ -32,6 +32,7 @@ namespace BattleshipProject
         public override void PlaceShips()
         {
             Console.WriteLine("Player" + playerNum + "'s turn to place ships");
+
             // For now just automatically place one shp
         }
 

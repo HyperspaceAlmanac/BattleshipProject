@@ -13,9 +13,6 @@ namespace BattleshipProject
 {
     class NPC : Player
     {
-        public static readonly Tuple<int, int>[] DIRECTIONS = new Tuple<int, int>[] {
-            new Tuple<int, int>(0, 1), new Tuple<int, int>(0, -1),
-            new Tuple<int, int>(1, 0), new Tuple<int, int>(-1, 0)};
         protected readonly int RNGSEED = 100;
         protected readonly bool USE_RNG_SEED = false;
         protected Random rand;
@@ -100,7 +97,7 @@ namespace BattleshipProject
             // Randomly choosing a number from HashSet
             // O(N) but best to have this here since it's done once per move
             foreach (Tuple<int, int> t in currentSearch) {
-                foreach (Tuple<int, int> direction in DIRECTIONS) {
+                foreach (Tuple<int, int> direction in Ship.DIRECTIONS) {
                     temp = new Tuple<int, int>(t.Item1 + direction.Item1, t.Item2 + direction.Item2);
                     // check if the move is good
                     if (ValidMove(temp.Item1, temp.Item2)) {
@@ -162,7 +159,7 @@ namespace BattleshipProject
         }
         protected bool TwoAdjacent(int x, int y)
         {
-            foreach (Tuple<int, int> tuple in DIRECTIONS)
+            foreach (Tuple<int, int> tuple in Ship.DIRECTIONS)
             {
                 if (currentSearch.Contains(new Tuple<int, int>(x + tuple.Item1, y + tuple.Item2)))
                 {
@@ -204,7 +201,7 @@ namespace BattleshipProject
                     placed = false;
                     x = rand.Next(GameState.BOARDHEIGHT);
                     y = rand.Next(GameState.BOARDWIDTH);
-                    modifier = DIRECTIONS[rand.Next(DIRECTIONS.Length)];
+                    modifier = Ship.DIRECTIONS[rand.Next(Ship.DIRECTIONS.Length)];
 
                     Tuple<int, int>[] shipCoordinates = Ship.ShipCoordinates(pair, x, y, modifier);
                     if (shipCoordinates != null && ownBoard.ValidPlacement(shipCoordinates)) {

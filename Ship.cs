@@ -24,6 +24,10 @@ namespace BattleshipProject
             new Tuple<string, int>("battleship", 4),
             new Tuple<string, int>("aircraft carrier", 5)};
 
+        public static readonly Tuple<int, int>[] DIRECTIONS = new Tuple<int, int>[] {
+            new Tuple<int, int>(0, 1), new Tuple<int, int>(0, -1),
+            new Tuple<int, int>(1, 0), new Tuple<int, int>(-1, 0)};
+
         // It is the responsibility of the module creaing the ship to do
         // handle rotation and confirming that the ship location is legal
         public Ship(string name, Tuple<int,int>[] coordinates)

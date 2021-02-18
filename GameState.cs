@@ -97,13 +97,13 @@ namespace BattleshipProject
                 Console.ForegroundColor = ALIVE_COLOR;
             }
             Console.ResetColor();
-            Console.WriteLine("It was a " + (boardState[x,y] == Location.Hit ? "Hit" : "Miss") + "!");
+            Console.WriteLine("It was a " + (boardState[x, y] == Location.Hit ? "Hit" : "Miss") + "!");
             Console.ResetColor();
         }
 
         public bool ValidPlacement(Tuple<int, int>[] shipCoordinates)
         {
-            foreach(Tuple<int,int> coordinate in shipCoordinates)
+            foreach (Tuple<int, int> coordinate in shipCoordinates)
             {
                 if (LocationOccupied(coordinate.Item1, coordinate.Item2))
                 {
@@ -156,13 +156,19 @@ namespace BattleshipProject
                 Console.Write(" x");
                 Console.ResetColor();
             }
-                
+
         }
         public void DisplayAll()
         {
             DisplayShipState();
             DisplayBoard();
         }
+
+        public void DisplayPlaceShip(Tuple<int, int>[] newShipCoords = null) {
+            DisplayShipState();
+            DisplayBoard(true, newShipCoords);
+        }
+
         private void DisplayShipState()
         {
             foreach (Ship s in ships)
