@@ -50,8 +50,8 @@ namespace BattleshipProject
             {
                 modifiedX = startX + modifier.Item1 * i;
                 modifiedY = startY + modifier.Item2 * i;
-                if (modifiedX < 0 || modifiedX >= GameState.BOARDWIDTH ||
-                    modifiedY < 0 || modifiedY >= GameState.BOARDHEIGHT)
+                if (modifiedX < 0 || modifiedX >= GameState.BOARDHEIGHT ||
+                    modifiedY < 0 || modifiedY >= GameState.BOARDWIDTH)
                 {
                     return null;
                 }

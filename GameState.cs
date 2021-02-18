@@ -189,6 +189,7 @@ namespace BattleshipProject
             // Display letters at top
             Console.WriteLine(" " + TOPBORDER);
             bool shipLocation;
+            bool newShipHere;
             for (int i = 0; i < boardState.GetLength(0); i++)
             {
                 Console.Write((i < 9 ? " " : "") + (i + 1));
@@ -210,6 +211,8 @@ namespace BattleshipProject
                         // now need to check for overlap
                         if (checkOverlap)
                         {
+                            newShipHere = false;
+                            // If checking overlap, go through list of new coordinates
                             foreach (Tuple<int, int> coord in newShipCoords)
                             {
                                 if (coord.Item1 == i && coord.Item2 == j)
@@ -222,11 +225,13 @@ namespace BattleshipProject
                                     {
                                         Console.BackgroundColor = PLACE_SHIP_COLOR;
                                     }
-                                }
-                                else if (shipLocation)
-                                {
-                                    Console.BackgroundColor = SHIP_COLOR;
-                                }
+                                    newShipHere = true;
+                                    break;
+                                }   
+                            }
+                            if (!newShipHere && shipLocation)
+                            {
+                                Console.BackgroundColor = SHIP_COLOR;
                             }
                         }
                         else if (shipLocation)

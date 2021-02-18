@@ -34,12 +34,16 @@ namespace BattleshipProject
             game.DisplayOpponentBoard();
         }
 
-        
-
-        protected void DisplayShipPlacementControls()
+        protected ConsoleKey ReadUserInput()
         {
-            Console.WriteLine("Please use Arrow keys to move the ship around.\n\"r\" key to rotate clockwise by 90 degrees, and spacebar or Enter to confirm placement");
+            // Could not quite get LastTimeInfo struct to work
+            // Found this workaround online to only read input when button is not held down
+            while (Console.KeyAvailable)
+            {
+                // don't intercept
+                Console.ReadKey(false);
+            }
+            return Console.ReadKey().Key;
         }
-
     }
 }

@@ -82,7 +82,7 @@ namespace BattleshipProject
         }
         private PLACEMENT_STATUS PlaceShipCommands(Tuple<int, int>[] coordinates)
         {
-            ConsoleKey key = Console.ReadKey().Key;
+            ConsoleKey key = ReadUserInput();
             switch (key)
             {
                 case ConsoleKey.LeftArrow:
@@ -142,8 +142,65 @@ namespace BattleshipProject
             }
         }
 
+        // Rotate in place
+        // To have the rotations... feel better, there is a difference between 
+        // Ship facing up and down, left, and right. Pivot will always be first location
         private void RotateShip(Tuple<int, int>[] coordinates)
         {
+            // Rotate first, move into boundary later
+            int startX = coordinates[0].Item1;
+            int startY = coordinates[0].Item2;
+            // These are the initial offsets. They will be upadted to new offset values
+            int diffX = coordinates[1].Item1 - coordinates[0].Item1;
+            int diffY = coordinates[1].Item2 - coordinates[0].Item2;
+            // Just do if else for the 4 directions
+            // If left or right
+            if (diffX == 0)
+            {
+                // Right -> DOWN
+                if (diffY == 1)
+                {
+                    diffX = 1;
+                    diffY = 0;
+                    // Maybe need to move up a few rows
+                    // board of size 10, ship size of 3 = occupying rows 7, 8, 9
+                    startX = Math.Min(GameState.BOARDHEIGHT - coordinates.Length, startX);
+                }
+                else // Left -> UP
+                {
+                    diffX = -1;
+                    diffY = 0;
+                    // May need to move down a few rows
+                    // Ship of size 3, would need to occupy 0, 1, 2
+                    startX = Math.Max(coordinates.Length - 1, startX);
+                }
+            }
+            else if (diffX == 1)
+            {
+                // Down relative to view of board -> Left
+                diffX = 0;
+                diffY = -1;
+                // May need to move the column to the right
+                startY = Math.Max(coordinates.Length - 1, startY);
+
+            }
+            else // has to be (-1, 0)
+            {
+                // Up relative to view of board -> Right
+                diffX = 0;
+                diffY = 1;
+                // May need to move column to the left
+                startY = Math.Min(GameState.BOARDWIDTH - coordinates.Length, startY);
+            }
+            for (int i = 0; i < coordinates.Length; i++)
+            {
+                coordinates[i] = new Tuple<int, int>(startX + diffX * i, startY + diffY * i);
+            }
+        }
+        private void DisplayShipPlacementControls()
+        {
+            Console.WriteLine("Please use Arrow keys to move the ship around and \"R\" to clockwise by 90 degrees.");
+            Console.WriteLine("Please press spacebar or Enter to confirm placement");
         }
     }
 }
