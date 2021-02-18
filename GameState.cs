@@ -30,7 +30,7 @@ namespace BattleshipProject
         public static readonly ConsoleColor SHIP_OVERLAP = ConsoleColor.DarkGray;
         public static readonly int BOARDWIDTH = 20;
         public static readonly int BOARDHEIGHT = 20;
-        private static readonly string TOPBORDER = "  A B C D E F G H I J K L M O P Q R S T U ";
+        private static readonly string BORDER = " A B C D E F G H I J K L M O P Q R S T U ";
         private static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
@@ -187,7 +187,7 @@ namespace BattleshipProject
         private void DisplayBoard(bool checkOverlap = false, Tuple<int, int>[] newShipCoords = null)
         {
             // Display letters at top
-            Console.WriteLine(" " + TOPBORDER);
+            Console.WriteLine(" " + BORDER);
             bool shipLocation;
             bool newShipHere;
             for (int i = 0; i < boardState.GetLength(0); i++)
@@ -243,8 +243,15 @@ namespace BattleshipProject
                     Console.BackgroundColor = prev;
                 }
                 Console.ResetColor();
+                Console.Write((i + 1) + (i < 9 ? " " : ""));
                 Console.WriteLine();
             }
+            Console.WriteLine(" " + BORDER);
+            for (int i = 0; i < 4 + BOARDWIDTH * 2; i++)
+            {
+                Console.Write("=");
+            }
+            Console.WriteLine();
         }
 
         // For manually testing adding in ships
