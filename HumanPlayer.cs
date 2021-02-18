@@ -12,19 +12,20 @@ namespace BattleshipProject
 {
     class HumanPlayer : Player
     {
+        private PlayerControl fleet;
+        private PlayerControl artillery;
         public HumanPlayer(int num, GameState ownBoard, GameState opponentBoard) : base(num, ownBoard, opponentBoard)
         {
-            PlayerControl controls = new PlayerControl(ownBoard, num);
+            fleet = new FleetCommand(ownBoard, num);
+            artillery = new BattleStation(ownBoard, num);
         }
         public override void TakeTurn()
         {
             ownBoard.DisplayOwnBoard();
             opponentBoard.DisplayOpponentBoard();
             bool done = false;
-            while (!done)
-            {
-                done = true;
-            }
+            artillery.PerformDuty();
+            done = true;
             Console.WriteLine("end of Player's turn");
             Console.ReadKey();
         }
@@ -32,7 +33,7 @@ namespace BattleshipProject
         public override void PlaceShips()
         {
             Console.WriteLine("Player" + playerNum + "'s turn to place ships");
-
+            fleet.PerformDuty();
             // For now just automatically place one shp
         }
 

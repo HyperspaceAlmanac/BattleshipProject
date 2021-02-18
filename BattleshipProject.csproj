@@ -43,6 +43,8 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="BattleStation.cs" />
+    <Compile Include="FleetCommand.cs" />
     <Compile Include="GameEngine.cs" />
     <Compile Include="GameState.cs" />
     <Compile Include="HumanPlayer.cs" />
