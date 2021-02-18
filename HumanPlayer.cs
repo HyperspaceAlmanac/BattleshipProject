@@ -12,20 +12,18 @@ namespace BattleshipProject
 {
     class HumanPlayer : Player
     {
-        private PlayerControl fleet;
-        private PlayerControl artillery;
+        private FleetCommand fleet;
+        private BattleStation artilleryStation;
         public HumanPlayer(int num, GameState ownBoard, GameState opponentBoard) : base(num, ownBoard, opponentBoard)
         {
             fleet = new FleetCommand(ownBoard, num);
-            artillery = new BattleStation(ownBoard, num);
+            artilleryStation = new BattleStation(opponentBoard, fleet, num);
         }
         public override void TakeTurn()
         {
             ownBoard.DisplayOwnBoard();
             opponentBoard.DisplayOpponentBoard();
-            bool done = false;
-            artillery.PerformDuty();
-            done = true;
+            artilleryStation.PerformDuty();
             Console.WriteLine("end of Player's turn");
             Console.ReadKey();
         }

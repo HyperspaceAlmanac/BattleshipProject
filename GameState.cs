@@ -31,7 +31,7 @@ namespace BattleshipProject
         public static readonly int BOARDWIDTH = 20;
         public static readonly int BOARDHEIGHT = 20;
         private static readonly string BORDER = " A B C D E F G H I J K L M O P Q R S T U ";
-        private static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
+        public static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
         List<Tuple<int, int>> allShipLocations;
@@ -39,12 +39,14 @@ namespace BattleshipProject
         int numShots;
 
         // Options for displaying current selected row / column
+        // These are only set through function that checks that these are in range and only update then
         private int rowSelected;
         private int columnSelected;
+
         private bool highlightRow;
         private bool highlightColumn;
         // Temporarily make public
-        public bool opponentBoard;
+        private bool opponentBoard;
 
         public GameState()
         {
@@ -62,7 +64,7 @@ namespace BattleshipProject
             ships = new List<Ship>();
             allShipLocations = new List<Tuple<int, int>>();
             moveHistory = new HashSet<Tuple<int, int>>();
-            this.opponentBoard = true;
+            opponentBoard = true;
         }
 
         // check if game can continue
@@ -164,6 +166,21 @@ namespace BattleshipProject
             DisplayBoard();
         }
 
+        public void DisplayHighlight(int row, int column)
+        {
+            if (row > -1 && row < BOARDHEIGHT && column > -1 && column < BOARDWIDTH)
+            {
+                highlightRow = true;
+                highlightColumn = true;
+                rowSelected = row;
+                columnSelected = column;
+            }
+            DisplayShipState();
+            DisplayBoard();
+            highlightRow = false;
+            highlightColumn = false;
+        }
+
         public void DisplayPlaceShip(Tuple<int, int>[] newShipCoords = null) {
             DisplayShipState();
             DisplayBoard(true, newShipCoords);
@@ -252,40 +269,6 @@ namespace BattleshipProject
                 Console.Write("=");
             }
             Console.WriteLine();
-        }
-
-        // For manually testing adding in ships
-        public bool TestAddShip()
-        {
-            // Destroyer 1
-            Tuple<int, int>[] shipCoords = new Tuple<int, int>[2];
-            shipCoords[0] = new Tuple<int, int> (0, 0);
-            shipCoords[1] = new Tuple<int, int> (0, 1);
-
-            ships.Add(new Ship("Destroyer", shipCoords));
-
-            // Destroyer 2
-            shipCoords = new Tuple<int, int>[2];
-            shipCoords[0] = new Tuple<int, int>(3, 2);
-            shipCoords[1] = new Tuple<int, int>(4, 2);
-            ships.Add(new Ship("Destroyer", shipCoords));
-
-            shipCoords = new Tuple<int, int>[5];
-            shipCoords[0] = new Tuple<int, int>(6, 2);
-            shipCoords[1] = new Tuple<int, int>(6, 3);
-            shipCoords[2] = new Tuple<int, int>(6, 4);
-            shipCoords[3] = new Tuple<int, int>(6, 5);
-            shipCoords[4] = new Tuple<int, int>(6, 6);
-            ships.Add(new Ship("Aircraft Carrier", shipCoords));
-
-            return true;
-        }
-        // Change to private later
-
-        public void TestDisplayHighlight()
-        {
-            highlightRow = true;
-            rowSelected = 0;
         }
 
         public void RemoveHighlight()

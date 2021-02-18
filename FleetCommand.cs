@@ -7,6 +7,7 @@ using System.Threading;
 
 namespace BattleshipProject
 {
+    // Class for handling player input for placing ships
     class FleetCommand : PlayerControl
     {
         enum PLACEMENT_STATUS
@@ -200,7 +201,13 @@ namespace BattleshipProject
         private void DisplayShipPlacementControls()
         {
             Console.WriteLine("Please use Arrow keys to move the ship around and \"R\" to clockwise by 90 degrees.");
-            Console.WriteLine("Please press spacebar or Enter to confirm placement");
+            Console.WriteLine("Please press spacebar or Enter to confirm placement\n");
+        }
+        public void DisplayStatus()
+        {
+            game.DisplayOwnBoard();
+            Console.WriteLine("Fleet condition:");
+            game.DisplayAll();
         }
     }
 }
