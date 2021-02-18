@@ -28,9 +28,9 @@ namespace BattleshipProject
             this.otherDivision = otherDivision;
         }
 
-        public override void PerformDuty()
+        public override void PerformAction()
         {
-            game.DisplayOpponentBoard();
+            game.DisplayOpponentBoardMode();
             PickSpot();
         }
 
@@ -61,8 +61,15 @@ namespace BattleshipProject
                     // Should not reach here
                     Console.WriteLine("Time to debug why the game did not break out of loop");
                 }
-                game.DisplayOpponentBoard();
-                game.DisplayAll();
+
+                if (rowNumber > -1 && columnNumber > -1)
+                {
+                    game.DisplayHighlight(rowNumber, columnNumber);
+                }
+                else
+                {
+                    game.DisplayAll();
+                }
                 otherDivision.DisplayStatus();
                 status = HandleInput(ReadUserInput());
                 if (status == TargetingStatus.LegalTarget)
@@ -72,7 +79,6 @@ namespace BattleshipProject
                 }
             }
             Console.Clear();
-            game.DisplayOpponentBoard();
             game.DisplayAction(rowNumber, columnNumber, "Player" + playerNum);
             game.DisplayAll();
             otherDivision.DisplayStatus();

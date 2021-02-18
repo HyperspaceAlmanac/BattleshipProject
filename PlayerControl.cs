@@ -20,7 +20,7 @@ namespace BattleshipProject
         }
 
         // Call this
-        public abstract void PerformDuty();
+        public abstract void PerformAction();
 
         // Utility function to delay reading input a bit when button is held down
         public static void PressKeyToContinue()
@@ -29,10 +29,6 @@ namespace BattleshipProject
             Thread.Sleep(100);
         }
 
-        public void GuessShipLocation()
-        {
-            game.DisplayOpponentBoard();
-        }
 
         protected ConsoleKey ReadUserInput()
         {

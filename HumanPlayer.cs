@@ -21,9 +21,7 @@ namespace BattleshipProject
         }
         public override void TakeTurn()
         {
-            ownBoard.DisplayOwnBoard();
-            opponentBoard.DisplayOpponentBoard();
-            artilleryStation.PerformDuty();
+            artilleryStation.PerformAction();
             Console.WriteLine("end of Player's turn");
             Console.ReadKey();
         }
@@ -31,7 +29,7 @@ namespace BattleshipProject
         public override void PlaceShips()
         {
             Console.WriteLine("Player" + playerNum + "'s turn to place ships");
-            fleet.PerformDuty();
+            fleet.PerformAction();
             // For now just automatically place one shp
         }
 
@@ -53,6 +51,8 @@ namespace BattleshipProject
             int otherPlayer = playerNum == 1 ? 1 : 2;
             Console.Clear();
             Console.WriteLine("Player" + playerNum + "'s turn has finished.");
+            Console.WriteLine("Player" + playerNum + ": please press any key to confirm");
+            PlayerControl.PressKeyToContinue();
             Console.WriteLine("Player" + otherPlayer + ": please press any key to continue");
             PlayerControl.PressKeyToContinue();
         }

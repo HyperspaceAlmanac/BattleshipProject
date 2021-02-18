@@ -277,11 +277,11 @@ namespace BattleshipProject
             highlightColumn = false;
         }
 
-        public void DisplayOpponentBoard()
+        public void DisplayOpponentBoardMode()
         {
             opponentBoard = true;
         }
-        public void DisplayOwnBoard()
+        public void DisplayOwnBoardMode()
         {
             opponentBoard = false;
         }

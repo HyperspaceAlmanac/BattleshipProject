@@ -20,9 +20,9 @@ namespace BattleshipProject
         {
         }
 
-        public override void PerformDuty()
+        public override void PerformAction()
         {
-            game.DisplayOwnBoard();
+            game.DisplayOwnBoardMode();
             PlaceShips();
         }
 
@@ -205,7 +205,7 @@ namespace BattleshipProject
         }
         public void DisplayStatus()
         {
-            game.DisplayOwnBoard();
+            game.DisplayOwnBoardMode();
             Console.WriteLine("Fleet condition:");
             game.DisplayAll();
         }

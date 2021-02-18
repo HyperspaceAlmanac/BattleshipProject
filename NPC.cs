@@ -191,7 +191,7 @@ namespace BattleshipProject
             Tuple<int, int> modifier;
             
             Console.Clear();
-            ownBoard.DisplayOwnBoard();
+            ownBoard.DisplayOwnBoardMode();
             ownBoard.DisplayAll();
             foreach (Tuple<string, int> pair in Ship.PIECES)
             {
@@ -217,6 +217,7 @@ namespace BattleshipProject
         {
             Console.WriteLine("The NPC has finished making its decision. Press any key to continue");
             PlayerControl.PressKeyToContinue();
+
         }
     }
 }
