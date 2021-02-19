@@ -28,7 +28,8 @@ namespace BattleshipProject
         public abstract void PlaceShips();
 
         // Display screen when switching between players
-        public abstract void SwitchPlayer();
+        public abstract void EndTurn();
+        public abstract void StartTurn();
 
         // Responsibility of method calling this to check correctness
 

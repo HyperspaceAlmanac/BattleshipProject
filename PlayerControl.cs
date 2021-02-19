@@ -25,8 +25,12 @@ namespace BattleshipProject
         // Utility function to delay reading input a bit when button is held down
         public static void PressKeyToContinue()
         {
+            while (Console.KeyAvailable)
+            {
+                // don't intercept
+                Console.ReadKey(false);
+            }
             Console.ReadKey();
-            Thread.Sleep(100);
         }
 
 

@@ -24,7 +24,7 @@ namespace BattleshipProject
         public static readonly ConsoleColor SUNK_COLOR = ConsoleColor.Red;
         public static readonly ConsoleColor SHIP_COLOR = ConsoleColor.White;
         public static readonly ConsoleColor HIGHLIGHT = ConsoleColor.White;
-        public static readonly ConsoleColor REPORT = ConsoleColor.DarkBlue;
+        public static readonly ConsoleColor REPORT_COLOR = ConsoleColor.DarkBlue;
         public static readonly ConsoleColor REPORT_BACKGROUND = ConsoleColor.Gray;
         public static readonly ConsoleColor PLACE_SHIP_COLOR = ConsoleColor.Green;
         public static readonly ConsoleColor SHIP_OVERLAP = ConsoleColor.DarkGray;
@@ -87,7 +87,7 @@ namespace BattleshipProject
         public void DisplayAction(int x, int y, string player)
         {
             Console.BackgroundColor = REPORT_BACKGROUND;
-            Console.ForegroundColor = REPORT;
+            Console.ForegroundColor = REPORT_COLOR;
             Console.Write(player + " chose " + NUMTOALPHABET[y].ToString() + (x + 1) + ".");
             if (boardState[x, y] == Location.Hit)
             {

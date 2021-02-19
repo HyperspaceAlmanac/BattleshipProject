@@ -43,20 +43,22 @@ namespace BattleshipProject
                 SelectMode();
 
                 p1.PlaceShips();
-                p1.SwitchPlayer();
+                p1.EndTurn();
                 p2.PlaceShips();
-                p2.SwitchPlayer();
+                p2.EndTurn();
                 while (!gameOver)
                 {
                     if (playerOneTurn)
                     {
+                        p1.StartTurn();
                         p1.TakeTurn();
-                        p1.SwitchPlayer();
+                        p1.EndTurn();
                     }
                     else
                     {
+                        p2.StartTurn();
                         p2.TakeTurn();
-                        p1.SwitchPlayer();
+                        p2.EndTurn();
                     }
                     if (p1.AllShipsSunk()) {
                         DisplayWinner(true);
@@ -95,12 +97,12 @@ namespace BattleshipProject
                         else if (val == "1")
                         {
                             p1 = new HumanPlayer(1, state1, state2);
-                            p2 = new HumanPlayer(2, state2, state1);
+                            p2 = new NPC(2, state2, state1);
                         }
                         else
                         {
                             p1 = new HumanPlayer(1, state1, state2);
-                            p2 = new NPC(2, state2, state1);
+                            p2 = new HumanPlayer(2, state2, state1);
                         }
 
                         done = true;

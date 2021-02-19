@@ -49,7 +49,8 @@ namespace BattleshipProject
                 // If prev hit, and there is hit before it, continue this trajectory
                 Nextmove();
             }
-            // For now, thinking of keeping track of previous 2 hits
+            Console.WriteLine("The NPC has finished Taking its turn. Press the \"Enter\" key to continue.");
+            Console.ReadLine();
         }
 
         protected void CompletelyRandom()
@@ -65,6 +66,8 @@ namespace BattleshipProject
                 {
                     result = opponentBoard.MakeMove(x, y);
                     opponentBoard.DisplayAction(x, y, $"NPC player{playerNum}");
+                    // DEBUG, Change to display just opponent board later
+                    //DisplayGameState.DisplayOpponentBoard(opponentBoard);
                     DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
                     if (result)
                     {
@@ -136,6 +139,8 @@ namespace BattleshipProject
                 currentSearch.Add(new Tuple<int, int>(result[0], result[1]));
             }
             opponentBoard.DisplayAction(result[0], result[1], $"NPC player{playerNum}");
+            // DEBUG, Display just opponent board state
+            //DisplayGameState.DisplayOpponentBoard(opponentBoard);
             DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
 
 
@@ -191,7 +196,7 @@ namespace BattleshipProject
             Tuple<int, int> modifier;
             
             Console.Clear();
-            // DEBUG
+            // DEBUG, comment out later
             DisplayGameState.DisplayOwnBoard(ownBoard);
 
             foreach (Tuple<string, int> pair in Ship.PIECES)
@@ -211,13 +216,18 @@ namespace BattleshipProject
                     }
                 }
             }
-            Console.WriteLine("The NPC has finished placing its ships");
-            // DEBUG
+            Console.WriteLine("The NPC has finished placing its ships. Press the \"Enter\" key to continue.");
             Console.ReadLine();
         }
 
-        public override void SwitchPlayer()
+        public override void StartTurn()
         {
+            Console.Clear();
+        }
+
+        public override void EndTurn()
+        {
+            Console.Clear();
             Console.WriteLine("The NPC has finished making its decision. Press any key to continue");
             PlayerControl.PressKeyToContinue();
 

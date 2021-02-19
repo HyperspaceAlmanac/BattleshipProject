@@ -70,6 +70,7 @@ namespace BattleshipProject
                 }
             }
             Console.Clear();
+            opponentGameState.DisplayAction(rowNumber, columnNumber, "Player" + playerNum);
             // Display board state one last time before clearing screen
             DisplayGameState.DisplayBothBoards(opponentGameState, playerGameState, rowNumber, columnNumber);
 
@@ -264,6 +265,8 @@ namespace BattleshipProject
 
         private void DisplayCurrentStatus()
         {
+            Console.BackgroundColor = GameState.REPORT_BACKGROUND;
+            Console.ForegroundColor = GameState.REPORT_COLOR;
             if (columnNumber == -1) {
                 Console.Write("No column selected ");
             } else {
@@ -284,6 +287,7 @@ namespace BattleshipProject
             {
                 Console.Write("Row: " + (rowNumber + 1) + " " );
             }
+            Console.ResetColor();
             Console.WriteLine();
         }
     }

@@ -15,10 +15,11 @@ namespace BattleshipProject
     static class DisplayGameState
     {
         private static readonly string BORDER = "  A B C D E F G H I J K L M N O P Q R S T ";
-        private static readonly string OFFSET = "                                          ";
+        private static readonly string OFFSET = "                                            ";
         public static void DisplayBothBoards(GameState opponentBoard, GameState ownBoard, int x = -1, int y = -1)
         {
             // Opponent first, and then ownboard
+            Console.WriteLine("Opponent Fleet Status");
             opponentBoard.DisplayShipState();
             Console.WriteLine(BORDER);
             int j;
@@ -29,14 +30,15 @@ namespace BattleshipProject
                     RowNumber(i);
                     opponentBoard.DisplayOpponentRow(i, x, y);
                     RowNumber(i, false);
+                } else {
                     if (i == GameState.BOARDHEIGHT)
                     {
-                        Console.Write(BORDER);
+                        Console.Write(BORDER + "  ");
                     }
-                }
-                if (i > GameState.BOARDHEIGHT)
-                {
-                    Console.Write(OFFSET);
+                    else
+                    {
+                        Console.Write(OFFSET);
+                    }
                 }
                 Separator();
 
@@ -56,6 +58,7 @@ namespace BattleshipProject
             Console.Write(OFFSET);
             Separator();
             Console.WriteLine(BORDER);
+            Console.WriteLine("Fleet Status");
             ownBoard.DisplayShipState();
         }
 
@@ -113,7 +116,7 @@ namespace BattleshipProject
                 }
                 else
                 {
-                    Console.Write(" " + (row + 1) + " ");
+                    Console.Write((row + 1) + " ");
                 }
             }
             else
