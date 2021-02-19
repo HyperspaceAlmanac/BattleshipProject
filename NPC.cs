@@ -49,8 +49,11 @@ namespace BattleshipProject
                 // If prev hit, and there is hit before it, continue this trajectory
                 Nextmove();
             }
-            Console.WriteLine("The NPC has finished Taking its turn. Press the \"Enter\" key to continue.");
-            Console.ReadLine();
+            if (!AllShipsSunk())
+            {
+                Console.WriteLine("The NPC has finished Taking its turn. Press the \"Enter\" key to continue.");
+                Console.ReadLine();
+            }
         }
 
         protected void CompletelyRandom()
@@ -227,10 +230,12 @@ namespace BattleshipProject
 
         public override void EndTurn()
         {
-            Console.Clear();
-            Console.WriteLine("The NPC has finished making its decision. Press any key to continue");
-            PlayerControl.PressKeyToContinue();
-
+            if (!AllShipsSunk())
+            {
+                Console.Clear();
+                Console.WriteLine("The NPC has finished making its decision. Press any key to continue");
+                PlayerControl.PressKeyToContinue();
+            }
         }
     }
 }

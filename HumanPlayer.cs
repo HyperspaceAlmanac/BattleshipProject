@@ -22,8 +22,11 @@ namespace BattleshipProject
         public override void TakeTurn()
         {
             artilleryStation.PerformAction();
-            Console.WriteLine("end of Player's turn");
-            Console.ReadKey();
+            if (!AllShipsSunk())
+            {
+                Console.WriteLine("end of Player's turn");
+                Console.ReadKey();
+            }
         }
 
         public override void PlaceShips()
@@ -40,12 +43,6 @@ namespace BattleshipProject
             Console.Clear();
         }
 
-        private void DisplayControls()
-        {
-            Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
-            Console.WriteLine("Use Escape or Backspace key to cancel, and space to confirm");
-        }
-
         public override void StartTurn()
         {
             Console.Clear();
@@ -54,10 +51,13 @@ namespace BattleshipProject
         }
         public override void EndTurn()
         {
-            Console.Clear();
-            Console.WriteLine("Player" + playerNum + "'s turn has finished.");
-            Console.WriteLine("Player" + playerNum + ": please press any key to confirm");
-            PlayerControl.PressKeyToContinue();
+            if (!AllShipsSunk())
+            {
+                Console.Clear();
+                Console.WriteLine("Player" + playerNum + "'s turn has finished.");
+                Console.WriteLine("Player" + playerNum + ": please press any key to confirm");
+                PlayerControl.PressKeyToContinue();
+            }
         }
     }
 }

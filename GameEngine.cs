@@ -27,6 +27,7 @@ namespace BattleshipProject
 
         private void DisplayIntro()
         {
+            Console.Clear();
             Console.WriteLine("===============================");
             Console.WriteLine("Welcome to Battleship!");
             Console.WriteLine("===============================");
@@ -34,10 +35,11 @@ namespace BattleshipProject
 
         public void RunGame()
         {
-            bool gameOver = false;
+            bool gameOver;
             bool exitGame = false;
             while (!exitGame)
             {
+                playerOneTurn = true;
                 gameOver = false;
                 DisplayIntro();
                 SelectMode();
@@ -107,6 +109,7 @@ namespace BattleshipProject
 
         private void DisplayWinner(bool playerOne)
         {
+            Console.Clear();
             Console.WriteLine("============================");
             Console.WriteLine("Player" + (playerOne ? 1 : 2) + " is the winner!");
             Console.WriteLine("============================");
@@ -115,7 +118,7 @@ namespace BattleshipProject
         // Maybe a bit confusing, but this method saves to the variable "exit"
         // Return false to replay, otherwise exit the game
         private bool RestartGame() {
-            Console.WriteLine("Would you like to play again? Please Enter \"yes\" to play again, otherwise the game will exit");
+            Console.WriteLine("Play again? Please Enter \"yes\" to play again, otherwise the game will exit");
             string val = Console.ReadLine();
             if (val == "yes")
             {

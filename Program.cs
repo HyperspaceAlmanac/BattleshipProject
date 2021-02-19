@@ -16,7 +16,6 @@ namespace BattleshipProject
         {
             Console.SetWindowSize(120, 40);
             GameEngine game = new GameEngine();
-            game.RunGame();
         }
     }
 }
