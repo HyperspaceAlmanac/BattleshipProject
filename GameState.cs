@@ -28,29 +28,21 @@ namespace BattleshipProject
         public static readonly ConsoleColor REPORT_BACKGROUND = ConsoleColor.Gray;
         public static readonly ConsoleColor PLACE_SHIP_COLOR = ConsoleColor.Green;
         public static readonly ConsoleColor SHIP_OVERLAP = ConsoleColor.DarkGray;
+        public static readonly ConsoleColor SHIP_HIT_COLOR = ConsoleColor.Gray;
         public static readonly int BOARDWIDTH = 20;
         public static readonly int BOARDHEIGHT = 20;
-        public static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
+        public static readonly string NUMTOALPHABET = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
-        List<Tuple<int, int>> allShipLocations;
+        Dictionary<Tuple<int, int>, string> allShipLocations;
         HashSet<Tuple<int, int>> moveHistory;
         int numShots;
 
         // Options for displaying current selected row / column
         // These are only set through function that checks that these are in range and only update then
-        private int rowSelected;
-        private int columnSelected;
-
-        private bool highlightRow;
-        private bool highlightColumn;
-        // Temporarily make public
-        private bool opponentBoard;
 
         public GameState()
         {
-            highlightRow = false;
-            highlightColumn = false;
             boardState = new Location[BOARDWIDTH, BOARDHEIGHT];
             for (int i = 0; i < BOARDHEIGHT; i++)
             {
@@ -61,9 +53,8 @@ namespace BattleshipProject
             }
             numShots = 0;
             ships = new List<Ship>();
-            allShipLocations = new List<Tuple<int, int>>();
+            allShipLocations = new Dictionary<Tuple<int, int>, string>();
             moveHistory = new HashSet<Tuple<int, int>>();
-            opponentBoard = true;
         }
 
         // check if game can continue
@@ -120,13 +111,16 @@ namespace BattleshipProject
             {
                 if (boardState[x, y] == Location.Empty)
                 {
-                    Location current = Location.Miss;
-                    foreach (Ship s in ships)
+                    Location current = allShipLocations.ContainsKey(new Tuple<int, int>(x, y)) ? Location.Hit : Location.Miss;
+                    // If hit, check for specific ship
+                    if (current == Location.Hit)
                     {
-                        if (s.hitShip(x, y))
+                        foreach (Ship s in ships)
                         {
-                            current = Location.Hit;
-                            break;
+                            if (s.hitShip(x, y))
+                            {
+                                break;
+                            }
                         }
                     }
                     boardState[x, y] = current;
@@ -148,13 +142,13 @@ namespace BattleshipProject
             else if (location == Location.Hit)
             {
                 Console.ForegroundColor = SUNK_COLOR;
-                Console.Write(" o");
+                Console.Write("o ");
                 Console.ResetColor();
             }
             else
             {
                 Console.ForegroundColor = ALIVE_COLOR;
-                Console.Write(" x");
+                Console.Write("x ");
                 Console.ResetColor();
             }
 
@@ -177,11 +171,26 @@ namespace BattleshipProject
 
         public void DisplayOpponentRow(int row, int highlightedRow = -1, int highlightedColumn = -1)
         {
+            bool shipHit = false;
             for (int j = 0; j < BOARDWIDTH; j++)
             {
+                shipHit = boardState[row, j] == Location.Hit;
+                
                 if ((highlightedRow > -1 && highlightedRow == row)
-                    || (highlightedColumn > -1 && highlightedColumn == j)) {
-                    Console.BackgroundColor = HIGHLIGHT;
+                    || (highlightedColumn > -1 && highlightedColumn == j))
+                {
+                    if (shipHit)
+                    {
+                        Console.BackgroundColor = SHIP_OVERLAP;
+                    }
+                    else
+                    {
+                        Console.BackgroundColor = HIGHLIGHT;
+                    }
+                }
+                else if (shipHit)
+                {
+                    Console.BackgroundColor = SHIP_HIT_COLOR;
                 }
                 DisplayLocation(boardState[row, j]);
                 Console.ResetColor();
@@ -191,10 +200,24 @@ namespace BattleshipProject
         {
             for (int j = 0; j < BOARDWIDTH; j++)
             {
-                if (allShipLocations.Contains(new Tuple<int, int>(row, j))) {
+                if (allShipLocations.ContainsKey(new Tuple<int, int>(row, j)))
+                {
                     Console.BackgroundColor = HIGHLIGHT;
                 }
-                DisplayLocation(boardState[row, j]);
+                if (boardState[row, j] == Location.Empty)
+                {
+                    Tuple<int, int> temp = new Tuple<int, int>(row, j);
+                    if (allShipLocations.ContainsKey(temp))
+                    {
+                        Console.Write(allShipLocations[temp] + " ");
+                    }
+                    else
+                    {
+                        DisplayLocation(boardState[row, j]);
+                    }
+                } else {
+                    DisplayLocation(boardState[row, j]);
+                }
                 Console.ResetColor();
             }
         }
@@ -205,7 +228,7 @@ namespace BattleshipProject
             bool newShipHere;
             for (int j = 0; j < BOARDWIDTH; j++)
             {
-                shipAlreadyHere = allShipLocations.Contains(new Tuple<int, int>(row, j));
+                shipAlreadyHere = allShipLocations.ContainsKey(new Tuple<int, int>(row, j));
                 newShipHere = false;
 
                 // If checking overlap, go through list of new coordinates
@@ -230,19 +253,35 @@ namespace BattleshipProject
                     Console.BackgroundColor = SHIP_COLOR;
                 }
 
-                DisplayLocation(boardState[row, j]);
+                if (boardState[row, j] == Location.Empty)
+                {
+                    Tuple<int, int> temp = new Tuple<int, int>(row, j);
+                    if (allShipLocations.ContainsKey(temp))
+                    {
+                        Console.Write(allShipLocations[temp] + " ");
+                    }
+                    else
+                    {
+                        DisplayLocation(boardState[row, j]);
+                    }
+                }
+                else
+                {
+                    DisplayLocation(boardState[row, j]);
+                }
                 Console.ResetColor();
             }
         }
 
         public bool LocationOccupied(int x, int y)
         {
-            return allShipLocations.Contains(new Tuple<int, int>(x, y));
+            return allShipLocations.ContainsKey(new Tuple<int, int>(x, y));
         }
 
         public void AddShip(Ship ship) {
             ships.Add(ship);
-            ship.FillInCoordinates(allShipLocations);
+            string firstCharacter = ship.ShipName()[0].ToString();
+            ship.fillInCoordinates(allShipLocations);
         }
 
         public bool AvailableMove(int x, int y)

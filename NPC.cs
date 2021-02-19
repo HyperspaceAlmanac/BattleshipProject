@@ -67,8 +67,8 @@ namespace BattleshipProject
                     result = opponentBoard.MakeMove(x, y);
                     opponentBoard.DisplayAction(x, y, $"NPC player{playerNum}");
                     // DEBUG, Change to display just opponent board later
-                    //DisplayGameState.DisplayOpponentBoard(opponentBoard);
-                    DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
+                    DisplayGameState.DisplayOpponentBoard(opponentBoard);
+                    //DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
                     if (result)
                     {
                         currentSearch = new HashSet<Tuple<int, int>>();
@@ -140,8 +140,8 @@ namespace BattleshipProject
             }
             opponentBoard.DisplayAction(result[0], result[1], $"NPC player{playerNum}");
             // DEBUG, Display just opponent board state
-            //DisplayGameState.DisplayOpponentBoard(opponentBoard);
-            DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
+            DisplayGameState.DisplayOpponentBoard(opponentBoard);
+            //DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
 
 
             // Check if AI will continue to search for ships or go completely random next turn
@@ -197,7 +197,7 @@ namespace BattleshipProject
             
             Console.Clear();
             // DEBUG, comment out later
-            DisplayGameState.DisplayOwnBoard(ownBoard);
+            //DisplayGameState.DisplayOwnBoard(ownBoard);
 
             foreach (Tuple<string, int> pair in Ship.PIECES)
             {
@@ -209,7 +209,7 @@ namespace BattleshipProject
                     y = rand.Next(GameState.BOARDWIDTH);
                     modifier = Ship.DIRECTIONS[rand.Next(Ship.DIRECTIONS.Length)];
 
-                    Tuple<int, int>[] shipCoordinates = Ship.ShipCoordinates(pair, x, y, modifier);
+                    Tuple<int, int>[] shipCoordinates = Ship.ToShipCoordinates(pair, x, y, modifier);
                     if (shipCoordinates != null && ownBoard.ValidPlacement(shipCoordinates)) {
                         ownBoard.AddShip(new Ship(pair.Item1, shipCoordinates));
                         placed = true;

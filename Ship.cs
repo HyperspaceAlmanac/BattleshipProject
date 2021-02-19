@@ -19,7 +19,6 @@ namespace BattleshipProject
 
         public static readonly Tuple<string, int>[] PIECES = new Tuple<string, int>[] {
             new Tuple<string, int>("destroyer", 2),
-            new Tuple<string, int>("destroyer", 2),
             new Tuple<string, int>("submarine", 3),
             new Tuple<string, int>("battleship", 4),
             new Tuple<string, int>("aircraft carrier", 5)};
@@ -42,7 +41,7 @@ namespace BattleshipProject
             }
         }
 
-        public static Tuple<int, int>[] ShipCoordinates(Tuple<string, int> pair, int startX, int startY, Tuple<int, int> modifier)
+        public static Tuple<int, int>[] ToShipCoordinates(Tuple<string, int> pair, int startX, int startY, Tuple<int, int> modifier)
         {
             Tuple<int, int>[] result = new Tuple<int, int>[pair.Item2];
             int modifiedX, modifiedY;
@@ -101,10 +100,12 @@ namespace BattleshipProject
             Console.ResetColor();
         }
 
-        public void FillInCoordinates(List<Tuple<int, int>> allCoord) {
+        // Has to be done this way due to hashSet being used to check for hits
+        // Kind of a mess
+        public void fillInCoordinates(Dictionary<Tuple<int, int>, string> shipToName) {
             foreach (Tuple<int, int> temp in shipCoordinates)
             {
-                allCoord.Add(new Tuple<int, int>(temp.Item1, temp.Item2));
+                shipToName[temp] = shipName[0].ToString();
             }
         }
 

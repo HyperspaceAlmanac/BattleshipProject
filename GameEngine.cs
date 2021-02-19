@@ -85,23 +85,15 @@ namespace BattleshipProject
                 {
                     case "1":
                     case "2":
-                    case "3": // comment out if not debuggign
                         GameState state1 = new GameState();
                         GameState state2 = new GameState();
-                        if (val == "3")
-                        {// Debug only, comment out when not debugging NPC
-                            p1 = new NPC(1, state1, state2);
-                            Thread.Sleep(100);
-                            p2 = new NPC(2, state2, state1);
-                        }
-                        else if (val == "1")
-                        {
-                            p1 = new HumanPlayer(1, state1, state2);
+                        p1 = new HumanPlayer(1, state1, state2);
+                        if (val == "1")
+                        {   
                             p2 = new NPC(2, state2, state1);
                         }
                         else
                         {
-                            p1 = new HumanPlayer(1, state1, state2);
                             p2 = new HumanPlayer(2, state2, state1);
                         }
 

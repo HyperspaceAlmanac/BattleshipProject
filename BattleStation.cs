@@ -52,7 +52,7 @@ namespace BattleshipProject
                 else if (status == TargetingStatus.InvalidTarget)
                 {
                     Console.ForegroundColor = ERROR_COLOR;
-                    Console.WriteLine("Invalid location, please call out another locatoin");
+                    Console.WriteLine("Invalid location, please call out another location");
                     Console.ResetColor();
                 }
                 else

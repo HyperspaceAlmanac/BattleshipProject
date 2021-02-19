@@ -35,7 +35,7 @@ namespace BattleshipProject
 
         public bool AllShipsSunk()
         {
-            return ownBoard.AllShipsSunk();
+            return opponentBoard.AllShipsSunk();
         }
     }
 }
