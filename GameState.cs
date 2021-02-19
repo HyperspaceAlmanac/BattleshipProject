@@ -30,7 +30,6 @@ namespace BattleshipProject
         public static readonly ConsoleColor SHIP_OVERLAP = ConsoleColor.DarkGray;
         public static readonly int BOARDWIDTH = 20;
         public static readonly int BOARDHEIGHT = 20;
-        private static readonly string BORDER = " A B C D E F G H I J K L M O P Q R S T U ";
         public static readonly string NUMTOALPHABET = "ABCDEFGHIJKLNOPQRSTUVWXYZ";
         Location[,] boardState;
         List<Ship> ships;
@@ -160,33 +159,8 @@ namespace BattleshipProject
             }
 
         }
-        public void DisplayAll()
-        {
-            DisplayShipState();
-            DisplayBoard();
-        }
 
-        public void DisplayHighlight(int row, int column)
-        {
-            if (row > -1 && row < BOARDHEIGHT && column > -1 && column < BOARDWIDTH)
-            {
-                highlightRow = true;
-                highlightColumn = true;
-                rowSelected = row;
-                columnSelected = column;
-            }
-            DisplayShipState();
-            DisplayBoard();
-            highlightRow = false;
-            highlightColumn = false;
-        }
-
-        public void DisplayPlaceShip(Tuple<int, int>[] newShipCoords = null) {
-            DisplayShipState();
-            DisplayBoard(true, newShipCoords);
-        }
-
-        private void DisplayShipState()
+        public void DisplayShipState()
         {
             foreach (Ship s in ships)
             {
@@ -201,89 +175,64 @@ namespace BattleshipProject
             Console.WriteLine();
         }
 
-        private void DisplayBoard(bool checkOverlap = false, Tuple<int, int>[] newShipCoords = null)
+        public void DisplayOpponentRow(int row, int highlightedRow = -1, int highlightedColumn = -1)
         {
-            // Display letters at top
-            Console.WriteLine(" " + BORDER);
-            bool shipLocation;
-            bool newShipHere;
-            for (int i = 0; i < boardState.GetLength(0); i++)
+            for (int j = 0; j < BOARDWIDTH; j++)
             {
-                Console.Write((i < 9 ? " " : "") + (i + 1));
-                if (opponentBoard && highlightRow && rowSelected == i)
-                {
+                if ((highlightedRow > -1 && highlightedRow == row)
+                    || (highlightedColumn > -1 && highlightedColumn == j)) {
                     Console.BackgroundColor = HIGHLIGHT;
                 }
-                for (int j = 0; j < boardState.GetLength(1); j++)
-                {
-                    ConsoleColor prev = Console.BackgroundColor;
-                    if (opponentBoard && highlightColumn && columnSelected == j)
-                    {
-                        Console.BackgroundColor = HIGHLIGHT;
-                    }
-                    // Display your own board, check if this is a ship location
-                    else if (!opponentBoard)
-                    {
-                        shipLocation = allShipLocations.Contains(new Tuple<int, int>(i, j));
-                        // now need to check for overlap
-                        if (checkOverlap)
-                        {
-                            newShipHere = false;
-                            // If checking overlap, go through list of new coordinates
-                            foreach (Tuple<int, int> coord in newShipCoords)
-                            {
-                                if (coord.Item1 == i && coord.Item2 == j)
-                                {
-                                    if (shipLocation)
-                                    {
-                                        Console.BackgroundColor = SHIP_OVERLAP;
-                                    }
-                                    else
-                                    {
-                                        Console.BackgroundColor = PLACE_SHIP_COLOR;
-                                    }
-                                    newShipHere = true;
-                                    break;
-                                }   
-                            }
-                            if (!newShipHere && shipLocation)
-                            {
-                                Console.BackgroundColor = SHIP_COLOR;
-                            }
-                        }
-                        else if (shipLocation)
-                        {
-                            Console.BackgroundColor = SHIP_COLOR;
-                        }
-                    }
-                    DisplayLocation(boardState[i, j]);
-                    Console.BackgroundColor = prev;
-                }
+                DisplayLocation(boardState[row, j]);
                 Console.ResetColor();
-                Console.Write((i + 1) + (i < 9 ? " " : ""));
-                Console.WriteLine();
             }
-            Console.WriteLine(" " + BORDER);
-            for (int i = 0; i < 4 + BOARDWIDTH * 2; i++)
+        }
+        public void DisplayOwnRow(int row)
+        {
+            for (int j = 0; j < BOARDWIDTH; j++)
             {
-                Console.Write("=");
+                if (allShipLocations.Contains(new Tuple<int, int>(row, j))) {
+                    Console.BackgroundColor = HIGHLIGHT;
+                }
+                DisplayLocation(boardState[row, j]);
+                Console.ResetColor();
             }
-            Console.WriteLine();
         }
 
-        public void RemoveHighlight()
+        public void DisplayOwnShipOverlapRow(int row, Tuple<int, int>[] newShipCoords)
         {
-            highlightRow = false;
-            highlightColumn = false;
-        }
+            bool shipAlreadyHere;
+            bool newShipHere;
+            for (int j = 0; j < BOARDWIDTH; j++)
+            {
+                shipAlreadyHere = allShipLocations.Contains(new Tuple<int, int>(row, j));
+                newShipHere = false;
 
-        public void DisplayOpponentBoardMode()
-        {
-            opponentBoard = true;
-        }
-        public void DisplayOwnBoardMode()
-        {
-            opponentBoard = false;
+                // If checking overlap, go through list of new coordinates
+                foreach (Tuple<int, int> coord in newShipCoords)
+                {
+                    if (coord.Item1 == row && coord.Item2 == j)
+                    {
+                        if (shipAlreadyHere)
+                        {
+                            Console.BackgroundColor = SHIP_OVERLAP;
+                        }
+                        else
+                        {
+                            Console.BackgroundColor = PLACE_SHIP_COLOR;
+                        }
+                        newShipHere = true;
+                        break;
+                    }
+                }
+                if (!newShipHere && shipAlreadyHere)
+                {
+                    Console.BackgroundColor = SHIP_COLOR;
+                }
+
+                DisplayLocation(boardState[row, j]);
+                Console.ResetColor();
+            }
         }
 
         public bool LocationOccupied(int x, int y)

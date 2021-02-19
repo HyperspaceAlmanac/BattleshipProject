@@ -9,13 +9,13 @@ namespace BattleshipProject
 {
     abstract class PlayerControl
     {
-        protected GameState game;
+        protected GameState playerGameState;
         protected int playerNum;
         protected static readonly ConsoleColor ERROR_COLOR = ConsoleColor.Red;
         protected static readonly ConsoleColor OK_COLOR = ConsoleColor.Green;
         public PlayerControl(GameState game, int playerNum)
         {
-            this.game = game;
+            playerGameState = game;
             this.playerNum = playerNum;
         }
 
@@ -41,5 +41,7 @@ namespace BattleshipProject
             }
             return Console.ReadKey().Key;
         }
+
+        protected abstract void DisplayInstructions();
     }
 }

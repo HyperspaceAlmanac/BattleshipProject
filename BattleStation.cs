@@ -19,18 +19,17 @@ namespace BattleshipProject
         private int rowNumber;
         private Dictionary<ConsoleKey, int> numberSet;
         private Dictionary<ConsoleKey, int> letterSet;
-        private FleetCommand otherDivision;
-        public BattleStation(GameState game, FleetCommand otherDivision, int playerNum) : base(game, playerNum)
+        private GameState opponentGameState;
+        public BattleStation(GameState opponentBoardState, GameState ownBoardState, int playerNum) : base(ownBoardState, playerNum)
         {
             numberSet = new Dictionary<ConsoleKey, int>();
             letterSet = new Dictionary<ConsoleKey, int>();
             PopulateDictionaries();
-            this.otherDivision = otherDivision;
+            opponentGameState = opponentBoardState;
         }
 
         public override void PerformAction()
         {
-            game.DisplayOpponentBoardMode();
             PickSpot();
         }
 
@@ -44,11 +43,11 @@ namespace BattleshipProject
             while (!done)
             {
                 Console.Clear();
-                DisplayTargetingControls();
+                DisplayInstructions();
                 DisplayCurrentStatus();
                 if (status == TargetingStatus.Continue)
                 {
-                    Console.WriteLine("Please call out a location");
+                    Console.WriteLine("");
                 }
                 else if (status == TargetingStatus.InvalidTarget)
                 {
@@ -62,31 +61,22 @@ namespace BattleshipProject
                     Console.WriteLine("Time to debug why the game did not break out of loop");
                 }
 
-                if (rowNumber > -1 && columnNumber > -1)
-                {
-                    game.DisplayHighlight(rowNumber, columnNumber);
-                }
-                else
-                {
-                    game.DisplayAll();
-                }
-                otherDivision.DisplayStatus();
+                DisplayGameState.DisplayBothBoards(opponentGameState, playerGameState, rowNumber, columnNumber);
                 status = HandleInput(ReadUserInput());
                 if (status == TargetingStatus.LegalTarget)
                 {
-                    result = game.MakeMove(rowNumber, columnNumber);
+                    result = opponentGameState.MakeMove(rowNumber, columnNumber);
                     done = true;
                 }
             }
             Console.Clear();
-            game.DisplayAction(rowNumber, columnNumber, "Player" + playerNum);
-            game.DisplayAll();
-            otherDivision.DisplayStatus();
+            // Display board state one last time before clearing screen
+            DisplayGameState.DisplayBothBoards(opponentGameState, playerGameState, rowNumber, columnNumber);
 
         }
         private TargetingStatus HandleInput(ConsoleKey key)
         {
-            if (key == ConsoleKey.Escape)
+            if (key == ConsoleKey.Escape || key == ConsoleKey.Backspace)
             {
                 rowNumber = -1;
                 columnNumber = -1;
@@ -190,7 +180,7 @@ namespace BattleshipProject
                 {
                     if (val == 0)
                     {
-                        rowNumber = 20;
+                        rowNumber = 19;
                     }
                     else // No other valid number that is 2x
                     {
@@ -199,8 +189,11 @@ namespace BattleshipProject
                 }
                 else
                 {
-                    // For everything else, pretty much override
-                    rowNumber = val - 1;
+                    if (val > 0)
+                    {
+                        // Set to value - 1 except for 0
+                        rowNumber = val - 1;
+                    }
                 }
                 
             }
@@ -215,7 +208,7 @@ namespace BattleshipProject
             {
                 return false;
             }
-            return game.AvailableMove(rowNumber, columnNumber);
+            return opponentGameState.AvailableMove(rowNumber, columnNumber);
         }
         private void PopulateDictionaries()
         {
@@ -262,8 +255,9 @@ namespace BattleshipProject
             letterSet.Add(ConsoleKey.S, 18);
             letterSet.Add(ConsoleKey.T, 19);
         }
-        private void DisplayTargetingControls()
+        protected override void DisplayInstructions()
         {
+            Console.WriteLine("Player" + playerNum + ": please call out a coordinate");
             Console.WriteLine("Please use Letters, Numbers, and Arrow keys to select a location.");
             Console.WriteLine("Please press spacebar or Enter to confirm placement, and Escape to clear input");
         }

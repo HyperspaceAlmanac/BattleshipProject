@@ -17,7 +17,7 @@ namespace BattleshipProject
         public HumanPlayer(int num, GameState ownBoard, GameState opponentBoard) : base(num, ownBoard, opponentBoard)
         {
             fleet = new FleetCommand(ownBoard, num);
-            artilleryStation = new BattleStation(opponentBoard, fleet, num);
+            artilleryStation = new BattleStation(opponentBoard, ownBoard, num);
         }
         public override void TakeTurn()
         {
@@ -43,16 +43,17 @@ namespace BattleshipProject
         private void DisplayControls()
         {
             Console.WriteLine("Please use letters, numbers, and direction keys to select row and column");
-            Console.WriteLine("Use Escape key to cancel, and space to confirm");
+            Console.WriteLine("Use Escape or Backspace key to cancel, and space to confirm");
         }
 
         public override void SwitchPlayer()
         {
-            int otherPlayer = playerNum == 1 ? 1 : 2;
+            int otherPlayer = playerNum == 1 ? 2 : 1;
             Console.Clear();
             Console.WriteLine("Player" + playerNum + "'s turn has finished.");
             Console.WriteLine("Player" + playerNum + ": please press any key to confirm");
             PlayerControl.PressKeyToContinue();
+            Console.Clear();
             Console.WriteLine("Player" + otherPlayer + ": please press any key to continue");
             PlayerControl.PressKeyToContinue();
         }

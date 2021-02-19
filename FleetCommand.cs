@@ -22,7 +22,6 @@ namespace BattleshipProject
 
         public override void PerformAction()
         {
-            game.DisplayOwnBoardMode();
             PlaceShips();
         }
 
@@ -46,8 +45,7 @@ namespace BattleshipProject
                 while (!done)
                 {
                     Console.Clear();
-                    Console.WriteLine($"Player{playerNum}'s turn to deploy their fleet");
-                    DisplayShipPlacementControls();
+                    DisplayInstructions();
                     // Display status related to controls
                     switch (status)
                     {
@@ -64,21 +62,21 @@ namespace BattleshipProject
                             Console.WriteLine("Should not reach here");
                             break;
                     }
-                    game.DisplayPlaceShip(shipCoordinates);
+                    DisplayGameState.DisplayOwnBoard(playerGameState, shipCoordinates);
                     // if tried to 
                     status = PlaceShipCommands(shipCoordinates);
                     if (status == PLACEMENT_STATUS.CAN_PLACE)
                     {
-                        if (game.ValidPlacement(shipCoordinates))
+                        if (playerGameState.ValidPlacement(shipCoordinates))
                         {
-                            game.AddShip(new Ship(piece.Item1, shipCoordinates));
+                            playerGameState.AddShip(new Ship(piece.Item1, shipCoordinates));
                             done = true;
                         }
                     }
                 }
                 Console.Clear();
                 Console.WriteLine("All ships successfully placed");
-                game.DisplayAll();
+                DisplayGameState.DisplayOwnBoard(playerGameState);
             }
         }
         private PLACEMENT_STATUS PlaceShipCommands(Tuple<int, int>[] coordinates)
@@ -100,7 +98,7 @@ namespace BattleshipProject
                     break;
                 case ConsoleKey.Spacebar:
                 case ConsoleKey.Enter:
-                    if (game.ValidPlacement(coordinates))
+                    if (playerGameState.ValidPlacement(coordinates))
                     {
                         return PLACEMENT_STATUS.CAN_PLACE;
                     }
@@ -198,16 +196,11 @@ namespace BattleshipProject
                 coordinates[i] = new Tuple<int, int>(startX + diffX * i, startY + diffY * i);
             }
         }
-        private void DisplayShipPlacementControls()
+        protected override void DisplayInstructions()
         {
+            Console.WriteLine($"Player{playerNum}'s turn to deploy their fleet");
             Console.WriteLine("Please use Arrow keys to move the ship around and \"R\" to clockwise by 90 degrees.");
             Console.WriteLine("Please press spacebar or Enter to confirm placement\n");
-        }
-        public void DisplayStatus()
-        {
-            game.DisplayOwnBoardMode();
-            Console.WriteLine("Fleet condition:");
-            game.DisplayAll();
         }
     }
 }

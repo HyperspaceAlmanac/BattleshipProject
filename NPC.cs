@@ -65,7 +65,7 @@ namespace BattleshipProject
                 {
                     result = opponentBoard.MakeMove(x, y);
                     opponentBoard.DisplayAction(x, y, $"NPC player{playerNum}");
-                    opponentBoard.DisplayAll();
+                    DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
                     if (result)
                     {
                         currentSearch = new HashSet<Tuple<int, int>>();
@@ -136,7 +136,7 @@ namespace BattleshipProject
                 currentSearch.Add(new Tuple<int, int>(result[0], result[1]));
             }
             opponentBoard.DisplayAction(result[0], result[1], $"NPC player{playerNum}");
-            opponentBoard.DisplayAll();
+            DisplayGameState.DisplayBothBoards(opponentBoard, ownBoard);
 
 
             // Check if AI will continue to search for ships or go completely random next turn
@@ -191,8 +191,9 @@ namespace BattleshipProject
             Tuple<int, int> modifier;
             
             Console.Clear();
-            ownBoard.DisplayOwnBoardMode();
-            ownBoard.DisplayAll();
+            // DEBUG
+            DisplayGameState.DisplayOwnBoard(ownBoard);
+
             foreach (Tuple<string, int> pair in Ship.PIECES)
             {
                 placed = false;
@@ -211,6 +212,8 @@ namespace BattleshipProject
                 }
             }
             Console.WriteLine("The NPC has finished placing its ships");
+            // DEBUG
+            Console.ReadLine();
         }
 
         public override void SwitchPlayer()
